@@ -61,7 +61,7 @@ public class Padded implements AsciiBlock {
    * @param paddedHeight
    *   The height of the padded block.
    */
-  public Padded(AsciiBlock original, char ch, HAlignment horiz, 
+  public Padded(AsciiBlock original, char ch, HAlignment horiz,
       VAlignment vert, int paddedWidth, int paddedHeight) {
     this.block = original;
     this.pad = new String(new char[] {ch});
