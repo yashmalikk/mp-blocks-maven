@@ -9,22 +9,6 @@ import java.util.Arrays;
  * @author Your Name Here
  */
 public class HComp implements AsciiBlock {
-  // +-----------+---------------------------------------------------
-  // | Constants |
-  // +-----------+
-
-  /**
-   * Ways to align the blocks in the composition.
-   */
-  public enum Alignment {
-    /** Align the blocks by their top row. */
-    TOP,
-    /** Align the blocks by their center row. */
-    CENTER,
-    /** Align the blocks by their bottom row. */
-    BOTTOM
-  };
-
   // +--------+------------------------------------------------------------
   // | Fields |
   // +--------+
@@ -37,7 +21,7 @@ public class HComp implements AsciiBlock {
   /**
    * How the blocks are aligned.
    */
-  Alignment align;
+  VAlignment align;
 
   // +--------------+------------------------------------------------------
   // | Constructors |
@@ -53,11 +37,11 @@ public class HComp implements AsciiBlock {
    * @param rightBlock
    *   The block on the right.
    */
-  public HComp(Alignment alignment, AsciiBlock leftBlock,
+  public HComp(VAlignment alignment, AsciiBlock leftBlock,
       AsciiBlock rightBlock) {
     this.align = alignment;
     this.blocks = new AsciiBlock[] {leftBlock, rightBlock};
-  } // HComp(A
+  } // HComp(VAlignment, AsciiBlock, AsciiBlock)
 
   /**
    * Build a horizontal composition of multiple blocks.
@@ -67,10 +51,10 @@ public class HComp implements AsciiBlock {
    * @param blocksToCompose
    *   The blocks we will be composing.
    */
-  public HComp(Alignment alignment, AsciiBlock[] blocksToCompose) {
+  public HComp(VAlignment alignment, AsciiBlock[] blocksToCompose) {
     this.align = alignment;
     this.blocks = Arrays.copyOf(blocksToCompose, blocksToCompose.length);
-  } // HComp(ALighment, AsciiBLOCK[])
+  } // HComp(Alignment, AsciiBLOCK[])
 
   // +---------+-----------------------------------------------------------
   // | Methods |

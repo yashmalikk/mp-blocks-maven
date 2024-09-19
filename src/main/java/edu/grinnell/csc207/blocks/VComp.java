@@ -10,22 +10,6 @@ import java.util.Arrays;
  * @author Your Name Here
  */
 public class VComp implements AsciiBlock {
-  // +-----------+---------------------------------------------------
-  // | Constants |
-  // +-----------+
-
-  /**
-   * The ways in which the composition can be arranged.
-   */
-  public enum Alignment {
-    /** Align the blocks by the left column. */
-    LEFT,
-    /** Align the blocks by the center column. *
-    CENTER,
-    /** Align the blocks by the right column. */
-    RIGHT
-  };
-
   // +--------+------------------------------------------------------------
   // | Fields |
   // +--------+
@@ -38,7 +22,7 @@ public class VComp implements AsciiBlock {
   /**
    * How the blocks are aligned.
    */
-  Alignment align;
+  HAlignment align;
 
   // +--------------+------------------------------------------------------
   // | Constructors |
@@ -54,11 +38,11 @@ public class VComp implements AsciiBlock {
    * @param bottomBlock
    *   The block on the bottom.
    */
-  public VComp(Alignment alignment, AsciiBlock topBlock,
+  public VComp(HAlignment alignment, AsciiBlock topBlock,
       AsciiBlock bottomBlock) {
     this.align = alignment;
     this.blocks = new AsciiBlock[] {topBlock, bottomBlock};
-  } // VComp(Alignment, AsciiBlock, AsciiBlock)
+  } // VComp(HAlignment, AsciiBlock, AsciiBlock)
 
   /**
    * Build a vertical composition of multiple blocks.
@@ -68,10 +52,10 @@ public class VComp implements AsciiBlock {
    * @param blocksToCompose
    *   The blocks we will be composing.
    */
-  public VComp(Alignment alignment, AsciiBlock[] blocksToCompose) {
+  public VComp(HAlignment alignment, AsciiBlock[] blocksToCompose) {
     this.align = alignment;
     this.blocks = Arrays.copyOf(blocksToCompose, blocksToCompose.length);
-  } // VComp(Alignment, AsciiBLOCK[])
+  } // VComp(HAlignment, AsciiBLOCK[])
 
   // +---------+-----------------------------------------------------------
   // | Methods |
