@@ -82,4 +82,31 @@ public class Grid implements AsciiBlock {
   public int width() {
     return 0;   // STUB
   } // width()
+
+  /**
+   * Determine if another block is structurally equivalent to this block.
+   *
+   * @param other
+   *   The block to compare to this block.
+   *
+   * @return true if the two blocks are structurally equivalent and
+   *    false otherwise.
+   */
+  public boolean eqv(AsciiBlock other) {
+    return ((other instanceof Grid) && (this.eqv((Grid) other)));
+  } // eqv(AsciiBlock)
+
+  /**
+   * Determine if another grid is structurally equivalent to this grid.
+   *
+   * @param other
+   *   The grid to compare to this grid.
+   *
+   * @return true if the two blocks are structurally equivalent and
+   *    false otherwise.
+   */
+  public boolean eqv(Grid other) {
+    return (this.hreps == other.hreps) && (this.vreps == other.hreps)
+        && (this.element.eqv(other.element));
+  } // eqv(Grid)
 } // class Grid
