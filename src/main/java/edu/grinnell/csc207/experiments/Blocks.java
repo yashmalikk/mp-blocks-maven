@@ -4,6 +4,7 @@ import edu.grinnell.csc207.blocks.AsciiBlock;
 import edu.grinnell.csc207.blocks.Boxed;
 import edu.grinnell.csc207.blocks.HComp;
 import edu.grinnell.csc207.blocks.Line;
+import edu.grinnell.csc207.blocks.Lines;
 import edu.grinnell.csc207.blocks.Rect;
 import edu.grinnell.csc207.blocks.VAlignment;
 
@@ -92,6 +93,21 @@ public class Blocks {
     exes.taller();
     figure(pen, "exes", exes);
     figure(pen, "boxedExes", boxedExes);
+
+    separator(pen);
+    pen.println("Multi-line boxes");
+    figure(pen, "Using an array",
+        new Lines(new String[] {"this","and","that","or","whatever"}));
+    figure(pen, "Using a multi-line string",
+        new Lines("""
+                  multi-line strings
+                  were
+                  introduced
+                  in
+                  Java 13
+                  """));
+    figure(pen, "Using a string with newlines",
+        new Lines("alpha\nbeta\ngamma\ndelta\nepsilon"));
 
     separator(pen);
     pen.println("Fun with horizontal composition");
