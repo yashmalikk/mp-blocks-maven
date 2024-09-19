@@ -6,7 +6,7 @@ package edu.grinnell.csc207.blocks;
 public enum HAlignment {
   /** Align by the left column. */
   LEFT,
-  /** Align by the center column. *
+  /** Align by the center column. */
   CENTER,
   /** Align by the right column. */
   RIGHT
