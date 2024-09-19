@@ -101,7 +101,7 @@ public class Blocks {
     separator(pen);
     pen.println("Multi-line boxes");
     figure(pen, "Using an array",
-        new Lines(new String[] {"this","and","that","or","whatever"}));
+        new Lines(new String[] {"this", "and", "that", "or", "whatever"}));
     figure(pen, "Using a multi-line string",
         new Lines("""
                   multi-line strings

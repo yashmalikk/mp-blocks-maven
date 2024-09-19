@@ -3,7 +3,7 @@ package edu.grinnell.csc207.blocks;
 import java.util.Arrays;
 
 /**
- * Multiple lines of text. The lines are left aligned. Used mostly for 
+ * Multiple lines of text. The lines are left aligned. Used mostly for
  * testing.
  *
  * @author Samuel A. Rebelsky
@@ -47,7 +47,7 @@ public class Lines implements AsciiBlock {
 
     // Update the lines to make them the same width.
     for (int i = 0; i < lines.length; i++) {
-      this.lines[i] = 
+      this.lines[i] =
           this.lines[i] + " ".repeat(this.width - this.lines[i].length());
     } // for
   } // Lines(String[])
