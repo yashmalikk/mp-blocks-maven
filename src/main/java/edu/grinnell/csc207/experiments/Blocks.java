@@ -2,10 +2,12 @@ package edu.grinnell.csc207.experiments;
 
 import edu.grinnell.csc207.blocks.AsciiBlock;
 import edu.grinnell.csc207.blocks.Boxed;
+import edu.grinnell.csc207.blocks.HAlignment;
 import edu.grinnell.csc207.blocks.HComp;
 import edu.grinnell.csc207.blocks.Line;
 import edu.grinnell.csc207.blocks.Lines;
 import edu.grinnell.csc207.blocks.Rect;
+import edu.grinnell.csc207.blocks.VComp;
 import edu.grinnell.csc207.blocks.VAlignment;
 
 import java.io.PrintWriter;
@@ -25,7 +27,7 @@ public class Blocks {
    *   What we use to print the separator.
    */
   static void separator(PrintWriter pen) {
-    pen.printf("\n-------------\n\n");
+    pen.printf("\n%s\n\n", "=".repeat(60));
   } // separator(PrintWriter)
 
   /**
@@ -41,6 +43,8 @@ public class Blocks {
   static void figure(PrintWriter pen, String caption, AsciiBlock block) {
     separator(pen);
     pen.println(caption);
+    pen.println("-".repeat(caption.length()));
+    pen.println();
     AsciiBlock.print(pen, block);
   } // figure
 
