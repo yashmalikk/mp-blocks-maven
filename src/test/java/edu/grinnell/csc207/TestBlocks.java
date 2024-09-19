@@ -5,9 +5,6 @@ import edu.grinnell.csc207.blocks.Empty;
 import edu.grinnell.csc207.blocks.Line;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
