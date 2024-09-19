@@ -75,7 +75,22 @@ public interface AsciiBlock {
    * @return true if they are in the same memory location and false otherwise.
    */
   public static boolean equal(AsciiBlock block1, AsciiBlock block2) {
-    return false;      // STUB
+    if (block1.width() != block2.width()) {
+      return false;
+    } // if
+    if (block1.height() != block2.height()) {
+      return false;
+    } // if
+    for (int i = 0; i < block1.height(); i++) {
+      try {
+        if (!block1.row(i).equals(block2.row(i))) {
+          return false;
+        } // if
+      } catch (Exception e) {
+        return false;
+      } // try/catch
+    } // for
+    return true;
   } // equal(AsciiBlock, AsciiBlock)
 
   // +---------+-----------------------------------------------------------
