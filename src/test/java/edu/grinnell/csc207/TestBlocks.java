@@ -3,6 +3,7 @@ package edu.grinnell.csc207;
 import edu.grinnell.csc207.blocks.AsciiBlock;
 import edu.grinnell.csc207.blocks.Empty;
 import edu.grinnell.csc207.blocks.Line;
+import edu.grinnell.csc207.blocks.Rect;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -18,7 +19,7 @@ public class TestBlocks {
 
   /**
    * Determine if two blocks are equal in that they have the same,
-   * width, height, and rows. 
+   * width, height, and rows.
    *
    * We do not rely on `AsciiBlock.equals` because someone may have
    * changed it to better pass tests.
@@ -49,6 +50,33 @@ public class TestBlocks {
     return true;
   } // same(AsciiBlock, AsciiBlock)
 
+  /**
+   * Convert a block to a string.
+   *
+   * @param block
+   *   The block to convert.
+   *
+   * @return the block with its rows separated by newlines.
+   */
+  public static String toString(AsciiBlock block) {
+    // Special case: The empty block.
+    if (block.height() == 0) {
+      return "";
+    } // if
+
+    StringBuilder result = new StringBuilder();
+
+    for (int i = 0; i < block.height(); i++) {
+      try {
+        result.append(block.row(i));
+      } catch (Exception e) {
+        result.append("*** ERROR ***");
+      } // try/catch
+      result.append("\n");
+    } // for
+    return result.toString();
+  } // toString()
+
   // +-------+-------------------------------------------------------
   // | Tests |
   // +-------+
@@ -61,6 +89,7 @@ public class TestBlocks {
     AsciiBlock empty = new Empty();
     assertEquals(0, empty.width());
     assertEquals(0, empty.height());
+    assertEquals("", toString(empty));
   } // testEmpty()
 
   /**
@@ -88,4 +117,18 @@ public class TestBlocks {
     assertEquals(1, line.height());
     assertEquals("Good day", line.row(0));
   } // testLineChange()
+
+  /**
+   * Do we successfully build rectangles?
+   */
+  @Test
+  public void testRect() throws Exception {
+    assertEquals("X\n", toString(new Rect('X', 1, 1)), "1x1 rectangle");
+    assertEquals("""
+                 YYY
+                 YYY
+                 """,
+        toString(new Rect('Y', 3, 2)),
+        "3x2 rectangle");
+  } // testRect()
 } // class TestBlocks
