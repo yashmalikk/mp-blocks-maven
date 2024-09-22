@@ -3,12 +3,23 @@ package edu.grinnell.csc207;
 import edu.grinnell.csc207.blocks.AsciiBlock;
 import edu.grinnell.csc207.blocks.Boxed;
 import edu.grinnell.csc207.blocks.Empty;
+import edu.grinnell.csc207.blocks.Grid;
+import edu.grinnell.csc207.blocks.HAlignment;
+import edu.grinnell.csc207.blocks.HComp;
+import edu.grinnell.csc207.blocks.HFlip;
 import edu.grinnell.csc207.blocks.Line;
+import edu.grinnell.csc207.blocks.Padded;
 import edu.grinnell.csc207.blocks.Rect;
 import edu.grinnell.csc207.blocks.Surrounded;
+import edu.grinnell.csc207.blocks.Trimmed;
+import edu.grinnell.csc207.blocks.VAlignment;
+import edu.grinnell.csc207.blocks.VComp;
+import edu.grinnell.csc207.blocks.VFlip;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
@@ -500,5 +511,229 @@ public class TestBlocks {
     assertEquals("ss", surrounded.row(1),
         "E: Correct row 1 of surrounded empty block");
   } // surroundedEmptyBlock()
+
+  // +-------+-------------------------------------------------------
+  // | Grids |
+  // +-------+
+
+  /**
+   * Testing of basic grid structures.
+   */
+  @Test
+  void TestGridBasic() throws Exception {
+    assertNotNull(new Grid(new Line("Hello"), 3, 2),
+        "R: Can grid text lines");
+    assertNotNull(new Grid(new Rect('B', 3, 4), 2, 3),
+        "R: Can grid rectangles");
+  } // TestGridBasic()
+
+  /**
+   * Testing of basic grid lines.
+   */
+  @Test
+  void TestGridLine() {
+    AsciiBlock gridLine = new Grid(new Line("Hello"), 3, 4);
+    assertEquals(15, gridLine.width(),
+        "M: Correct width for a grid line");
+    assertEquals(4, gridLine.height(),
+        "M: Correct height for a grid line");
+    assertEquals("""
+                 HelloHelloHello
+                 HelloHelloHello
+                 HelloHelloHello
+                 HelloHelloHello
+                 """,
+        TestUtils.toString(gridLine),
+        "M: Correct contents for a gridded line");
+  } // TestGridLine()
+
+  /**
+   * Testing of gridding boxes.
+   */
+  @Test
+  void TestGridBox() throws Exception {
+    AsciiBlock gridBox = new Grid(new Boxed(new Empty()), 3, 2);
+    assertEquals(6, gridBox.width(),
+        "M: Correct width for a gridded empty box");
+    assertEquals(4, gridBox.height(),
+        "M: Correct height for a gridded empty box");
+    assertEquals("""
+                 /\\/\\/\\
+                 \\/\\/\\/
+                 /\\/\\/\\
+                 \\/\\/\\/
+                 """,
+        TestUtils.toString(gridBox),
+        "M: Correct contents for a gridded empty box");
+  } // TestGridRect()
+
+  /**
+   * Testing of nested grids.
+   */
+  @Test
+  void TestGridNested() throws Exception {
+    AsciiBlock innermost = new Grid(new Surrounded(new Line("A"), 'B'), 3, 2);
+    assertEquals(9, innermost.width(),
+        "M: Correct width for gridded surrounded line");
+    assertEquals(6, innermost.height(),
+        "M: Correct height for gridded surrounded line");
+    assertEquals("""
+                 BBBBBBBBB
+                 BABBABBAB
+                 BBBBBBBBB
+                 BBBBBBBBB
+                 BABBABBAB
+                 BBBBBBBBB
+                 """,
+                 TestUtils.toString(innermost),
+        "M: Correct contents for gridded surrounded line");
+    AsciiBlock outer = new Grid(new Surrounded(innermost, 'C'), 2, 3);
+    assertEquals(22, outer.width(),
+        "E: Correct width for gridded surrounded gridded surrounded line");
+    assertEquals(24, outer.height(),
+        "E: Correct width for gridded surrounded gridded surrounded line");
+    for (int i : new int[] {0, 7, 8, 15, 16, 23}) {
+      assertEquals("CCCCCCCCCCCCCCCCCCCCCC", outer.row(i), 
+        "E: Correct row " + i + " in gridded surrounded gridded surround line");
+    } // for
+    for (int i : new int[] {1, 3, 4, 6, 9, 11, 12, 14, 17, 19, 20, 22}) {
+      assertEquals("CBBBBBBBBBCCBBBBBBBBBC", outer.row(i),
+        "E: Correct row " + i + " in gridded surrounded gridded surround line");
+    } // for
+    for (int i : new int[] {2, 5, 10, 13, 18, 21}) {
+      assertEquals("CBABBABBABCCBABBABBABC", outer.row(i),
+        "E: Correct row " + i + " in gridded surrounded gridded surround line");
+    } // for
+  } // TestGridNested()
+
+  /**
+   * Test of grid lines that have been modified.
+   */
+  @Test
+  public void testGridLineChange () {
+    Line line = new Line("Hello");
+    AsciiBlock gridLine = new Grid(line, 4, 5);
+
+    line.update("Hi");
+    assertEquals(8, gridLine.width(),
+        "E: Correct width after making line narrower");
+    assertEquals(5, gridLine.height(),
+        "E: Correct height after making line narrower");
+    assertEquals("""
+                 HiHiHiHi
+                 HiHiHiHi
+                 HiHiHiHi
+                 HiHiHiHi
+                 HiHiHiHi
+                 """,
+                 TestUtils.toString(gridLine));
+
+    line.update("abcdef");
+    assertEquals(24, gridLine.width(),
+        "E: Correct width after making line wider");
+    assertEquals(5, gridLine.height(),
+        "E: Correct height after making line wider");
+    assertEquals("""
+                 abcdefabcdefabcdefabcdef
+                 abcdefabcdefabcdefabcdef
+                 abcdefabcdefabcdefabcdef
+                 abcdefabcdefabcdefabcdef
+                 abcdefabcdefabcdefabcdef
+                 """,
+                 TestUtils.toString(gridLine));
+  } // testGridLineChange ()
+
+  /**
+   * Test of grid rects that change. We do this as one test so that
+   * we can stack changes.
+   */
+  @Test
+  public void testGridRectChange() throws Exception {
+    Rect rect = new Rect('X', 2, 4);
+    AsciiBlock gridRect = new Grid(rect, 2, 2);
+    rect.wider();
+
+    assertEquals(6, gridRect.width(),
+        "E: Correct width for a wider grided rectangle");
+    assertEquals(8, gridRect.height(),
+        "E: Correct height for a wider grided rectangle");
+    assertEquals("""
+                 XXXXXX
+                 XXXXXX
+                 XXXXXX
+                 XXXXXX
+                 XXXXXX
+                 XXXXXX
+                 XXXXXX
+                 XXXXXX
+                 """,
+        TestUtils.toString(gridRect),
+        "E: Correct contents for a wider grided rectangle");
+
+    rect.narrower();
+    rect.narrower();
+
+    assertEquals(2, gridRect.width(),
+        "E: Correct width for a narrower grided rectangle");
+    assertEquals(8, gridRect.height(),
+        "E: Correct height for a narrower grided rectangle");
+    assertEquals("""
+                 XX
+                 XX
+                 XX
+                 XX
+                 XX
+                 XX
+                 XX
+                 XX
+                 """,
+        TestUtils.toString(gridRect),
+        "E: Correct contents for a narrower grided rectangle");
+
+    rect.shorter();
+    rect.shorter();
+
+    assertEquals(2, gridRect.width(),
+        "E: Correct width for a shorter grided rectangle");
+    assertEquals(4, gridRect.height(),
+        "E: Correct height for a shorter grided rectangle");
+    assertEquals("""
+                 XX
+                 XX
+                 XX
+                 XX
+                 """,
+        TestUtils.toString(gridRect),
+        "E: Correct contents for a shorter grided rectangle");
+
+    rect.taller();
+
+    assertEquals(2, gridRect.width(),
+        "E: Correct width for a taller grided rectangle");
+    assertEquals(6, gridRect.height(),
+        "E: Correct height for a taller grided rectangle");
+    assertEquals("""
+                XX
+                XX
+                XX
+                XX
+                XX
+                XX
+                 """,
+        TestUtils.toString(gridRect),
+        "E: Correct contents for a taller grided rectangle");
+  } // testGridRectChange()
+
+  /**
+   * Make sure that we can grid the empty block.
+   */
+  @Test
+  public void gridEmptyBlock() throws Exception {
+    AsciiBlock grid = new Grid(new Empty(), 4, 4);
+    assertEquals(0, grid.width(),
+        "E: Correct width for a grid empty block");
+    assertEquals(0, grid.height(),
+        "E: Correct height for a grid empty block");
+  } // gridEmptyBlock()
 
 } // class TestBlocks
