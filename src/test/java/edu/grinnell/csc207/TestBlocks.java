@@ -21,12 +21,57 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 /**
  * Tests of the various ASCII Blocks.
  */
 public class TestBlocks {
+  // +---------+---------------------------------------------------
+  // | Globals |
+  // +---------+
+
+  /** A 1x6 block, used primarily in hcomp tests. */
+  static AsciiBlock ab1x6;
+
+  /** A 2x5 block, used primarily in hcomp tests. */
+  static AsciiBlock ab2x5;
+
+  /** A 3x4 block, used primarily in hcomp tests. */
+  static AsciiBlock ab3x4;
+
+  /** A 1x3 block, used primarily in hcomp tests. */
+  static AsciiBlock ab1x3;
+
+  /** A 2x2 block, used primarily in hcomp tests. */
+  static AsciiBlock ab2x2;
+
+  /** A 3x1 block, used primarily in hcomp tests. */
+  static AsciiBlock ab3x1;
+
+  // +----------------+----------------------------------------------
+  // | Initialization |
+  // +----------------+
+
+  /**
+   * Set up the globals.
+   */
+  @BeforeAll
+  public static void setup() throws Exception {
+    // Globals for HComp tests
+    try {
+      ab1x6 = new Rect('6', 1, 6);
+      ab2x5 = new Rect('5', 2, 5);
+      ab3x4 = new Rect('4', 3, 4);
+      ab1x3 = new Rect('3', 1, 3);
+      ab2x2 = new Rect('2', 2, 2);
+      ab3x1 = new Rect('1', 3, 1);
+    } catch (Exception e) {
+      // Do nothing; we shouldn't get exceptions.
+    } // try/catch
+  } // setup()
+
   // +-------+-------------------------------------------------------
   // | Empty |
   // +-------+
@@ -37,9 +82,9 @@ public class TestBlocks {
   @Test
   public void testEmpty() {
     AsciiBlock empty = new Empty();
-    assertEquals(0, empty.width(), 
+    assertEquals(0, empty.width(),
         "R: Empty block has no width");
-    assertEquals(0, empty.height(), 
+    assertEquals(0, empty.height(),
         "R: Empty block has no height");
     assertEquals("", TestUtils.toString(empty),
         "R: Empty block has no contents");
@@ -87,7 +132,7 @@ public class TestBlocks {
    */
   @Test
   public void testRect() throws Exception {
-    assertEquals("X\n", TestUtils.toString(new Rect('X', 1, 1)), 
+    assertEquals("X\n", TestUtils.toString(new Rect('X', 1, 1)),
         "R: 1x1 rectangle");
     assertEquals("""
                  YYY
@@ -103,7 +148,7 @@ public class TestBlocks {
   @Test
   public void testRectChange() throws Exception {
     Rect rect = new Rect('!', 3, 4);
-    assertEquals("!!!\n!!!\n!!!\n!!!\n", TestUtils.toString(rect), 
+    assertEquals("!!!\n!!!\n!!!\n!!!\n", TestUtils.toString(rect),
         "R: original 3x4 rectangle");
 
     rect.wider();
@@ -115,7 +160,7 @@ public class TestBlocks {
         "M: even wider version of rectangle, now 5x4");
 
     rect.taller();
-    assertEquals("!!!!!\n!!!!!\n!!!!!\n!!!!!\n!!!!!\n", 
+    assertEquals("!!!!!\n!!!!!\n!!!!!\n!!!!!\n!!!!!\n",
         TestUtils.toString(rect),
         "M: taller version of rectangle, now 5x5");
 
@@ -243,7 +288,7 @@ public class TestBlocks {
   } // testBoxedLineWider()
 
   /**
-   * Test of boxed rects that change. We do this as one test so that
+   * Test of boxed rects that change. We do this as ab3x1 test so that
    * we can stack changes.
    */
   @Test
@@ -415,13 +460,13 @@ public class TestBlocks {
         "E: Correct width after making surrounded line wider");
     assertEquals(3, surroundedLine.height(),
         "E: Correct height after making surrounded line wider");
-    assertEquals("xxxxxxx\nxABCDEx\nxxxxxxx\n", 
+    assertEquals("xxxxxxx\nxABCDEx\nxxxxxxx\n",
         TestUtils.toString(surroundedLine),
         "E: Correct contents for widened surrounded line");
   } // testSurroundedLineWider()
 
   /**
-   * Test of surrounded rects that change. We do this as one test so that
+   * Test of surrounded rects that change. We do this as ab3x1 test so that
    * we can stack changes.
    */
   @Test
@@ -593,7 +638,7 @@ public class TestBlocks {
     assertEquals(24, outer.height(),
         "E: Correct width for gridded surrounded gridded surrounded line");
     for (int i : new int[] {0, 7, 8, 15, 16, 23}) {
-      assertEquals("CCCCCCCCCCCCCCCCCCCCCC", outer.row(i), 
+      assertEquals("CCCCCCCCCCCCCCCCCCCCCC", outer.row(i),
         "E: Correct row " + i + " in gridded surrounded gridded surround line");
     } // for
     for (int i : new int[] {1, 3, 4, 6, 9, 11, 12, 14, 17, 19, 20, 22}) {
@@ -644,7 +689,7 @@ public class TestBlocks {
   } // testGridLineChange ()
 
   /**
-   * Test of grid rects that change. We do this as one test so that
+   * Test of grid rects that change. We do this as ab3x1 test so that
    * we can stack changes.
    */
   @Test
@@ -735,5 +780,289 @@ public class TestBlocks {
     assertEquals(0, grid.height(),
         "E: Correct height for a grid empty block");
   } // gridEmptyBlock()
+
+  // +------------------------+--------------------------------------
+  // | Horizontal composition |
+  // +------------------------+
+
+  /**
+   * Make sure that the constructor doesn't throw an error.
+   */
+  @Test
+  public void testHCompConstructor() {
+    assertNotNull(new HComp(VAlignment.TOP,
+        new AsciiBlock[] {new Line("A"), new Line("B"), new Line("C")}),
+        "R: Can build a horizontal composition");
+  } // tstHCompConstructor()
+
+  /**
+   * Horizontal composition, top aligned, spaces at the right.
+   */
+  @Test
+  public void testHCompTopSpacesRight() {
+    AsciiBlock topDecreasing = new HComp(VAlignment.TOP,
+        new AsciiBlock[] {ab1x6, ab2x5, ab3x4, ab1x3, ab2x2, ab3x1});
+    assertEquals(12, topDecreasing.width(),
+                 "M: Correct width of top-aligned hcomp with spaces at right");
+    assertEquals(6, topDecreasing.height(),
+                 "M: Correct height of top-aligned hcomp with spaces at right");
+    assertEquals(
+        ""
+            + "655444322111\n"
+            + "655444322   \n"
+            + "6554443     \n"
+            + "655444      \n"
+            + "655         \n"
+            + "6           \n",
+        TestUtils.toString(topDecreasing),
+        "M: Correct contents of top-aligned hcomp with spaces at right");
+  } // testHCompTopSpacesRight
+
+  /**
+   * Horizontal composition, top aligned, spaces at the left.
+   */
+  @Test
+  public void testHCompTopSpacesLeft() {
+    AsciiBlock topIncreasing = new HComp(VAlignment.TOP,
+        new AsciiBlock[] {ab3x1, ab2x2, ab1x3, ab3x4, ab2x5, ab1x6});
+    assertEquals(12, topIncreasing.width(),
+                 "M: Correct width of top-aligned hcomp with spaces at left");
+    assertEquals(6, topIncreasing.height(),
+                 "M: Correct height of top-aligned hcomp with spaces at left");
+    assertEquals(
+        ""
+            + "111223444556\n"
+            + "   223444556\n"
+            + "     3444556\n"
+            + "      444556\n"
+            + "         556\n"
+            + "           6\n",
+        TestUtils.toString(topIncreasing),
+        "M: Correct contents of top-aligned hcomp with spaces at left");
+  } // testHCompTopSpacesLeft()
+
+  /**
+   * Horizontal composition, center aligned, offset by 2.
+   */
+  @Test
+  public void testHCompCenterNormal() {
+    AsciiBlock center1 = new HComp(VAlignment.CENTER,
+        new AsciiBlock[] {ab1x6, ab3x4, ab2x2});
+    assertEquals(6, center1.width(),
+                 "M: Correct width of center-aligned hcomp all even height");
+    assertEquals(6, center1.height(),
+                 "M: Correct height of center-aligned hcomp all even height");
+    assertEquals(
+        ""
+            + "6     \n"
+            + "6444  \n"
+            + "644422\n"
+            + "644422\n"
+            + "6444  \n"
+            + "6     \n",
+        TestUtils.toString(center1),
+        "M: Correct contents of center-aligned hcomp all even height");
+
+    AsciiBlock center2 = new HComp(VAlignment.CENTER,
+        new AsciiBlock[] {ab3x1, ab2x5, ab1x3});
+    assertEquals(6, center2.width(),
+        "M: Correct width of center-aligned hcomp all odd height");
+    assertEquals(5, center2.height(),
+        "M: Correct height of center-aligned hcomp all odd height");
+    assertEquals(
+        ""
+            + "   55 \n"
+            + "   553\n"
+            + "111553\n"
+            + "   553\n"
+            + "   55 \n",
+        TestUtils.toString(center2),
+        "M: Correct contents of center-aligned hcomp all odd height");
+  } // testHCompCenterNormal()
+
+  /**
+   * Horizontal composition, center aligned, various offsets.
+   */
+  @Test
+  public void testHCompCenterUneven() {
+    AsciiBlock center3 = new HComp(VAlignment.CENTER,
+        new AsciiBlock[] {ab2x5, ab2x2});
+    assertEquals(4, center3.width(),
+        "M: Correct width of center aligned hcomp with mixed heights");
+    assertEquals(5, center3.height(),
+        "M: Correct height of center aligned hcomp with mixed heights");
+    assertEquals(
+        ""
+            + "55  \n"
+            + "5522\n"
+            + "5522\n"
+            + "55  \n"
+            + "55  \n",
+        TestUtils.toString(center3),
+        "E: Correct contents of center-aligned hcomp w/ odd diff in heights");
+
+    AsciiBlock center4 = new HComp(VAlignment.CENTER,
+        new AsciiBlock[] {ab3x1, ab1x6, ab2x2, ab2x5, ab1x3, ab3x4});
+    assertEquals(12, center4.width(),
+        "M: Correct width of center-aligned hcomp with mixed heights");
+    assertEquals(6, center4.height(),
+        "M: Correct height of center-aligned hcomp with mixed heights");
+    assertEquals(
+        ""
+            + "   6  55    \n"
+            + "   6  553444\n"
+            + "111622553444\n"
+            + "   622553444\n"
+            + "   6  55 444\n"
+            + "   6        \n",
+        TestUtils.toString(center4),
+        "E: Correct contents of center-aligned hcomp with mixed heights");
+  } // testHCompCenterUneven
+
+  /**
+   * Horizontal composition at the bottom with spaces in the middle.
+   */
+  @Test
+  public void testHCompBottomSpacesCenter() {
+    AsciiBlock bottom = new HComp(VAlignment.BOTTOM,
+        new AsciiBlock[] {ab1x6, ab3x4, ab2x2, ab3x1, ab1x3, ab2x5});
+    assertEquals(12, bottom.width(),
+        "M: Correct width of bottom-aligned hcomp with center spaces");
+    assertEquals(6, bottom.height(),
+        "M: Correct height of bottom-aligned hcomp with center spaces");
+    assertEquals(
+        ""
+            + "6           \n"
+            + "6         55\n"
+            + "6444      55\n"
+            + "6444     355\n"
+            + "644422   355\n"
+            + "644422111355\n",
+        TestUtils.toString(bottom),
+        "M: Correct contents of bottom-aligned hcomp with center spaces");
+  } // testHCompBottomSpacesCenter()
+
+  /**
+   * Make sure that the horizontal composition of empty blocks
+   * works correctly.
+   *
+   * @throws Exception
+   *   When one of the rect constructors fails (which they shouldn't).
+   */
+  @Test
+  public void testHCompEmpty() throws Exception {
+    AsciiBlock empty = new HComp(VAlignment.TOP,
+        new AsciiBlock[] { new Empty(), new Empty(), new Empty()});
+    assertEquals(0, empty.height(),
+        "E: Width of horizontal composition of empty blocks is 0");
+    assertEquals(0, empty.width(),
+        "E: Height of horizontal composition of empty blocks is 0");
+
+    AsciiBlock emptyPlus = new HComp(VAlignment.TOP,
+        new AsciiBlock[] { new Empty(), new Rect('A', 3, 2), new Empty(),
+            new Rect('B', 3, 4), new Empty(), new Empty() });
+    assertEquals(6, emptyPlus.width(),
+       "E: Width of horizontal composition with empty blocks");
+    assertEquals(4, emptyPlus.height(),
+       "E: Height of horizontal composition with empty blocks");
+    assertEquals(
+        ""
+            + "AAABBB\n"
+            + "AAABBB\n"
+            + "   BBB\n"
+            + "   BBB\n",
+        TestUtils.toString(emptyPlus),
+        "E: Contents of horizontal composition with empty blocks");
+  } // testHCompEmpty()
+
+  /**
+   * Make sure that horizontal composition of mutated blocks works 
+   * correctly.
+   *
+   * @throws Exception
+   *   WHen one of the rect constructors fails (which they shouldn't).
+   */
+  @Test
+  public void testHCompChange() throws Exception {
+    Rect a = new Rect('A', 4, 2);
+    Rect b = new Rect('B', 3, 3);
+    Rect c = new Rect('C', 2, 4);
+    AsciiBlock block = new HComp(VAlignment.TOP, new AsciiBlock[] {a, b, c});
+
+    // Check the original
+    assertEquals(9, block.width(),
+        "M: Correct width of block");
+    assertEquals(4, block.height(),
+        "M: Correct height of block");
+    assertEquals("AAAABBBCC\nAAAABBBCC\n    BBBCC\n       CC\n",
+        TestUtils.toString(block),
+        "M: Correct contents of original block");
+
+    // Make them all wider
+    a.wider();
+    b.wider();
+    c.wider();
+    assertEquals(12, block.width(),
+        "E: Correct width after widening");
+    assertEquals(4, block.height(),
+        "E: Correct height after widening");
+    assertEquals("AAAAABBBBCCC\nAAAAABBBBCCC\n     BBBBCCC\n         CCC\n",
+        TestUtils.toString(block),
+        "E: Correct contents after widening");
+
+    // Make the shorter ones taller, which shouldn't affect the overall height.
+    a.taller();
+    b.taller();
+    assertEquals(12, block.width(),
+        "E: Correct width after making smaller taller");
+    assertEquals(4, block.height(),
+        "E: Correct height after making smaller taller");
+    assertEquals("AAAAABBBBCCC\nAAAAABBBBCCC\nAAAAABBBBCCC\n     BBBBCCC\n",
+        TestUtils.toString(block),
+        "E: Correct contents after making saller taller");
+
+    // Make the last one shorter.
+    c.shorter();
+    c.shorter();
+    assertEquals(12, block.width(),
+        "E: Correct width after making c shorter");
+    assertEquals(4, block.height(),
+        "E: Correct height after making c shorter");
+    assertEquals("AAAAABBBBCCC\nAAAAABBBBCCC\nAAAAABBBB   \n     BBBB   \n",
+        TestUtils.toString(block),
+        "E: Correct contents after making c shorter");
+
+    // Make the middle one even taller and everything a bit narrower.
+    b.taller();
+    a.narrower();
+    a.narrower();
+    b.narrower();
+    b.narrower();
+    c.narrower();
+    c.narrower();
+    assertEquals(6, block.width(),
+        "E: Correct width after making narrower and taller");
+    assertEquals(5, block.height(),
+        "E: Correct height after making narrower and taller");
+    assertEquals("AAABBC\nAAABBC\nAAABB \n   BB \n   BB \n",
+        TestUtils.toString(block),
+        "E: Correct contents after making narrower and taller");
+
+    // Make the b's shorter again.
+    b.shorter();
+    b.shorter();
+    b.shorter();
+    assertEquals(6, block.width(),
+        "E: Correct width after making b much shorter");
+    assertEquals(3, block.height(),
+        "E: Correct height after making b much shorter");
+    assertEquals("AAABBC\nAAABBC\nAAA   \n",
+        TestUtils.toString(block),
+        "E: Correct contents after making b much shorter");
+  } // testHCompChange()
+
+  // +----------------------+----------------------------------------
+  // | Vertical composition |
+  // +----------------------+
 
 } // class TestBlocks
