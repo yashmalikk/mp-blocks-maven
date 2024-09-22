@@ -64,7 +64,7 @@ public class TestBlockEquiv {
             new AsciiBlock[] {new Line("One")})),
         "M: Empty block is not equivalent to a singleton hcomp");
     assertFalse(empty.eqv(new VComp(HAlignment.LEFT, new AsciiBlock[] {})),
-        "E: Empty block is not equivalent to an empty horiz composition");
+        "E: Empty block is not equivalent to an empty vertical composition");
     assertFalse(
          empty.eqv(new VComp(HAlignment.RIGHT, 
              new AsciiBlock[] {new Line("One")})),
@@ -149,7 +149,7 @@ public class TestBlockEquiv {
             new AsciiBlock[] {new Line("O"), new Line("O"), new Line("O")})),
         "M: Line OOO is not equivalent to an hcomp of three O's");
     assertFalse(line.eqv(new VComp(HAlignment.LEFT, new AsciiBlock[] {})),
-        "E: Line OOO is not equivalent to an empty horiz composition");
+        "E: Line OOO is not equivalent to an empty vertical composition");
     assertFalse(
          line.eqv(new VComp(HAlignment.RIGHT, new AsciiBlock[] {line})),
         "M: Line OOO is not equivalent to a singleton vcomp of the same line");
@@ -246,7 +246,7 @@ public class TestBlockEquiv {
         rect.eqv(new HComp(VAlignment.TOP, new AsciiBlock[] {rr, rr, rr})),
         "E: Sample rect is not equivalent to a similar hcomp");
     assertFalse(rect.eqv(new VComp(HAlignment.LEFT, new AsciiBlock[] {})),
-        "E: Sample rect is not equivalent to an empty horiz composition");
+        "E: Sample rect is not equivalent to an empty vertical composition");
     assertFalse(
         rect.eqv(new VComp(HAlignment.RIGHT, 
              new AsciiBlock[] {new Line("RRR")})),
@@ -275,5 +275,195 @@ public class TestBlockEquiv {
             3, 2)),
         "E: Sample rect is not equivalent to a 0-padded version of rhe same block");
   } // testNotEqvRect()
+
+  // +-------+-------------------------------------------------------
+  // | Boxed |
+  // +-------+
+
+  /**
+   * Make sure two equivalent boxed blocks are equivalent.
+   */
+  @Test
+  public void testEqvBoxed() throws Exception {
+    assertTrue((new Boxed(new Empty())).eqv(new Boxed(new Empty())),
+        "M: Boxed empty blocks are equivalent");
+    assertTrue((new Boxed(new Line(""))).eqv(new Boxed(new Line(""))),
+        "M: Boxed empty lines are equivalent");
+    assertTrue((new Boxed(new Line("Foo"))).eqv(new Boxed(new Line("Foo"))),
+        "M: Boxed nonempty lines are equivalent");
+    assertTrue((new Boxed(new Rect('@', 3, 2))).eqv(
+        new Boxed(new Rect('@', 3, 2))),
+        "M: Boxed equivalent rectangles are equivalent");
+    assertTrue((new Boxed(new Boxed(new Line("Foo")))).eqv(
+        new Boxed(new Boxed(new Line("Foo")))),
+        "M: Doubly boxed lines are equivalent");
+  } // testEqvBoxed
+
+  /**
+   * Make sure that a box is not equivalent to any other
+   * type of block.
+   */
+  @Test
+  public void testNotEqvBoxed() throws Exception {
+    AsciiBlock box = new Boxed(new Line("line"));
+    assertFalse((new Boxed(new Line("alpha"))).eqv(new Boxed(new Line("beta"))),
+        "M: Two different boxed lines are different");
+    assertFalse((new Boxed(new Rect('$', 3, 2))).eqv(
+        new Boxed(new Rect('$', 2, 3))),
+        "M: Two different boxed rects are different");
+    assertFalse(box.eqv(new Line("line")),
+        "M: Sample box is not equivalent to a line");
+    assertFalse(box.eqv(new Rect('x', 2, 5)),
+        "M: Sample box is not equivalent to a rectangle");
+    assertFalse(box.eqv(new Surrounded(new Line("box"), '"')),
+        "M: Sample box is not equivalent to a surrounded box");
+    assertFalse(box.eqv(new Grid(box, 1, 1)),
+        "M: Sample box is not equivalent to a 1x1 grid of the same box");
+    assertFalse(box.eqv(new Grid(new Line("O"), 3, 1)),
+        "M: Sample box is not equivalent to a 3x1 grid of O");
+    assertFalse(box.eqv(new HComp(VAlignment.CENTER, new AsciiBlock[] {})),
+        "M: Sample box is not equivalent to an empty horiz composition");
+    assertFalse(
+        box.eqv(new HComp(VAlignment.BOTTOM, new AsciiBlock[] {box})),
+        "M: Sample box is not equivalent to a singleton hcomp of that box");
+    assertFalse(
+        box.eqv(new HComp(VAlignment.BOTTOM, 
+            new AsciiBlock[] {box, new Empty()})),
+        "M: Sample box is not equivalent to an hcomp of that box and empty");
+    assertFalse(
+        box.eqv(new HComp(VAlignment.BOTTOM, 
+            new AsciiBlock[] {new Line("O"), new Line("O"), new Line("O")})),
+        "M: Sample box is not equivalent to an hcomp of three O's");
+    assertFalse(box.eqv(new VComp(HAlignment.LEFT, new AsciiBlock[] {})),
+        "M: Sample box is not equivalent to an empty vertical composition");
+    assertFalse(
+         box.eqv(new VComp(HAlignment.RIGHT, new AsciiBlock[] {box})),
+        "M: Sample box is not equivalent to a singleton vcomp of the same box");
+    assertFalse(box.eqv(new HFlip(box)),
+        "M: Sample box is not equivalent to horizontally flipped box block");
+    assertFalse(box.eqv(new VFlip(box)),
+        "M: Sample box is not equivalent to vertically flipped box block");
+    assertFalse(
+        box.eqv(new Trimmed(new Line("OOOhhhh"), HAlignment.LEFT,
+            VAlignment.TOP, 3, 1)),
+        "M: Sample box is not equivalent to a trimmed box block");
+    assertFalse(
+        box.eqv(new Padded(box, 'x', HAlignment.LEFT, VAlignment.TOP,  
+            3, 0)),
+        "M: Sample box is not equivalent to a padded box block");
+  } // testNotEqvBox()
+
+  // +------------+--------------------------------------------------
+  // | Surrounded |
+  // +------------+
+
+  /**
+   * Make sure two equivalent surrounded blocks are equivalent.
+   */
+  @Test
+  public void testEqvSurrounded() throws Exception {
+    assertTrue(
+        (new Surrounded(new Empty(), ' ')).eqv(
+            new Surrounded(new Empty(), ' ')),
+        "M: Surrounded empty blocks are equivalent");
+    assertTrue(
+        (new Surrounded(new Line(""), 'a')).eqv(
+            new Surrounded(new Line(""), 'a')),
+        "M: Surrounded empty lines are equivalent");
+    assertTrue(
+        (new Surrounded(new Line("Foo"), 'b')).eqv(
+            new Surrounded(new Line("Foo"), 'b')),
+        "M: Surrounded nonempty lines are equivalent");
+    assertTrue(
+        (new Surrounded(new Rect('@', 3, 2), 'd')).eqv(
+            new Surrounded(new Rect('@', 3, 2), 'd')),
+        "M: Surrounded equivalent rectangles are equivalent");
+    assertTrue(
+        (new Surrounded(new Surrounded(new Line("Foo"), ' '), '*')).eqv(
+            new Surrounded(new Surrounded(new Line("Foo"), ' '), '*')),
+        "M: Doubly surrounded lines are equivalent");
+  } // testEqvSurrounded
+
+  /**
+   * Make sure that different surrounded boxes are different.
+   */
+  @Test
+  public void testNotEqvDiffSurrounded() throws Exception {
+    assertFalse(
+       (new Surrounded(new Empty(), ' ')).eqv(
+           new Surrounded(new Line(""), ' ')),
+       "M: Surrounded empty is not the same as a surrounded line");
+    assertFalse(
+       (new Surrounded(new Line("a"), 'b')).eqv(
+           new Surrounded(new Line("b"), 'b')),
+       "M: Surrounded different lines are different");
+    assertFalse(
+       (new Surrounded(new Rect('c', 3, 2), 'd')).eqv(
+           (new Surrounded(new Rect('c', 3, 3), 'd'))),
+       "M: Surrounded different rectangles are different");
+    assertFalse(
+       (new Surrounded(new Surrounded(new Line ("a"), ' '), ' ')).eqv(
+           (new Surrounded(new Line("a"), ' '))),
+       "M: Doubly surrounded is not the same as singly surrounded.");
+    assertFalse(
+       (new Surrounded(new Line("a"), ' ')).eqv(
+           (new Surrounded(new Surrounded(new Line ("a"), ' '), ' '))),
+       "M: Singly surrounded is not the same as doubly surrounded.");
+  } // testNotEqvDiffSurrounded()
+
+  /**
+   * Make sure that a box is not equivalent to any other
+   * type of block.
+   */
+  @Test
+  public void testNotEqvSurrounded() throws Exception {
+    AsciiBlock block = new Surrounded(new Line("A"), 'A');
+    assertFalse(block.eqv(new Line("line")),
+        "M: Sample surround is not equivalent to a line");
+    assertFalse(block.eqv(new Rect('A', 3, 3)),
+        "M: Sample surround is not equivalent to a similar rectangle");
+    assertFalse(block.eqv(new Grid(block, 1, 1)),
+        "E: Sample surround is not equivalent to a 1x1 grid of the same block");
+    assertFalse(block.eqv(new Grid(new Line("A"), 3, 3)),
+        "E: Sample surround is not equivalent to a 3x3 grid of A");
+    assertFalse(block.eqv(new HComp(VAlignment.CENTER, new AsciiBlock[] {})),
+        "M: Sample surround is not equivalent to an empty horiz composition");
+    assertFalse(
+        block.eqv(new HComp(VAlignment.BOTTOM, new AsciiBlock[] {block})),
+        "E: Sample surround is not eqv to a singleton hcomp of that block");
+    assertFalse(
+        block.eqv(new HComp(VAlignment.BOTTOM, 
+            new AsciiBlock[] {block, new Empty()})),
+        "M: Sample surround is not eqv to an hcomp of that block and empty");
+    assertFalse(
+        block.eqv(new HComp(VAlignment.BOTTOM, 
+            new AsciiBlock[] {new Line("O"), new Line("O"), new Line("O")})),
+        "M: Sample surround is not equivalent to an hcomp of three O's");
+    assertFalse(block.eqv(new VComp(HAlignment.LEFT, new AsciiBlock[] {})),
+        "M: Sample surround is not eqv to an empty vertical composition");
+    assertFalse(
+         block.eqv(new VComp(HAlignment.RIGHT, new AsciiBlock[] {block})),
+        "E: Sample surround is not eqv a singleton vcomp of the block");
+    assertFalse(block.eqv(new HFlip(block)),
+        "M: Sample surround is not eqv to horizontally flipped surround");
+    assertFalse(block.eqv(new VFlip(block)),
+        "M: Sample surround is not eqv to vertically flipped surround");
+    assertFalse(
+        block.eqv(new Trimmed(block, HAlignment.LEFT,
+            VAlignment.TOP, 3, 3)),
+        "E: Sample surround is not equivalent to a trimmed surround");
+    assertFalse(
+        block.eqv(new Trimmed(new Surrounded(block, 'A'), HAlignment.CENTER,
+            VAlignment.CENTER, 3, 3)),
+        "E: Sample surround is not equivalent to a trimmed bigger surround");
+    assertFalse(
+        block.eqv(new Padded(block, 'x', HAlignment.LEFT, VAlignment.TOP,  
+            3, 3)),
+        "E: Sample surround is not equivalent to a padded box block");
+    assertFalse(
+        block.eqv(new Padded(new Line("A"), 'A', HAlignment.LEFT, 
+            VAlignment.TOP, 3, 3)),
+        "E: Sample surround is not eqv to a similar looking padded box");
+  } // testNotEqvBox()
 
 } // class TestBlockEquiv
