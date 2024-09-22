@@ -273,7 +273,7 @@ public class TestBlockEquiv {
     assertFalse(
         rect.eqv(new Padded(rect, 'R', HAlignment.LEFT, VAlignment.TOP,  
             3, 2)),
-        "E: Sample rect is not equivalent to a 0-padded version of rhe same block");
+        "E: Sample rect is not equivalent to a 0-padded version of the same block");
   } // testNotEqvRect()
 
   // +-------+-------------------------------------------------------
@@ -464,6 +464,92 @@ public class TestBlockEquiv {
         block.eqv(new Padded(new Line("A"), 'A', HAlignment.LEFT, 
             VAlignment.TOP, 3, 3)),
         "E: Sample surround is not eqv to a similar looking padded box");
-  } // testNotEqvBox()
+  } // testNotEqvSurrounded()
+
+  // +-------+-------------------------------------------------------
+  // | Grids |
+  // +-------+
+
+  /**
+   * Make sure two simple grids are equivalent.
+   *
+   * @throws Exception
+   *   If the `Rect` constructor throws an exception.
+   */
+  @Test
+  public void testEqvGrid() throws Exception {
+    assertTrue(
+        (new Grid(new Line("XYZ"), 1, 1)).eqv(new Grid(new Line("XYZ"), 1, 1)),
+        "M: Two 1x1 grids are eqivalent");
+    assertTrue(
+        (new Grid(new Rect('x', 3, 5), 4, 4).eqv(
+            new Grid(new Rect('x', 3, 5), 4, 4))),
+        "M: Two 4x4 grids are eqivalent");
+  } // testEqvGrid
+
+  /**
+   * Make sure that a grid is not equivalent to any other
+   * type of block.
+   *
+   * @throws Exception
+   *   If the `Grid` constructor happens to do so.
+   */
+  @Test
+  public void testNotEqvGrid() throws Exception {
+    AsciiBlock grid = new Grid(new Line("G"), 3, 2);
+    assertFalse(grid.eqv(new Line("GGGGGGGGGGGG")),
+        "M: Sample grid is not equivalent to a line");
+    assertFalse(grid.eqv(new Grid(new Line("g"), 3, 2)),
+        "M: Sample grid is not eqv to a diff grid of same dimensions");
+    assertFalse(grid.eqv(new Grid(new Line("G"), 2, 3)),
+        "M: Sample grid is not equivalent to a grid of inverted dimensions");
+    assertFalse(grid.eqv(new Boxed(grid)),
+        "M: Sample grid is not equivalent to a boxed grid");
+    assertFalse(grid.eqv(new Surrounded(new Empty(), 'X')),
+        "E: Sample grid is not eqv to a surrounded empty");
+    assertFalse(grid.eqv(new Grid(grid, 1, 1)),
+        "E: Sample grid is not equivalent to a 1x1 grid of the grid");
+    assertFalse(grid.eqv(new HComp(VAlignment.CENTER, new AsciiBlock[] {})),
+        "E: Sample grid is not equivalent to an empty horiz composition");
+    assertFalse(grid.eqv(new HComp(VAlignment.BOTTOM, new AsciiBlock[] {grid})),
+        "M: Sample grid is not equivalent to a singleton hcomp");
+    AsciiBlock rg = new Rect('G', 1, 2);
+    assertFalse(
+        grid.eqv(new HComp(VAlignment.TOP, new AsciiBlock[] {rg, rg, rg})),
+        "E: Sample grid is not equivalent to a similar hcomp");
+    assertFalse(grid.eqv(new VComp(HAlignment.LEFT, new AsciiBlock[] {})),
+        "E: Sample grid is not equivalent to an empty vertical composition");
+    assertFalse(
+        grid.eqv(new VComp(HAlignment.RIGHT, 
+             new AsciiBlock[] {new Line("GGG")})),
+        "M: Sample grid is not equivalent to a singleton vcomp");
+    assertFalse(
+        grid.eqv(new VComp(HAlignment.LEFT, 
+             new AsciiBlock[] {new Line("GGG"), new Line("GGG")})),
+        "E: Sample grid is not equivalent to a similar-appearing vcomp");
+    assertFalse(grid.eqv(new HFlip(grid)),
+        "M: Sample grid is not equivalent to horizontally flipped version");
+    assertFalse(grid.eqv(new VFlip(grid)),
+        "M: Sample grid is not equivalent to vertically flipped version");
+    assertFalse(
+        grid.eqv(new Trimmed(grid, HAlignment.LEFT, VAlignment.TOP, 3, 2)),
+        "E: Sample grid is not equivalent to the same grid, trimmed");
+    assertFalse(
+        grid.eqv(new Trimmed(new Rect('G', 10, 10), HAlignment.LEFT,
+            VAlignment.TOP, 3, 2)),
+        "E: Sample grid is not equivalent to a similar trimmed rect");
+    assertFalse(
+        grid.eqv(new Trimmed(new Grid(new Line("G"), 10, 10), HAlignment.RIGHT,
+            VAlignment.BOTTOM, 3, 2)),
+        "E: Sample grid is not equivalent to a similar trimmed grid");
+    assertFalse(
+        grid.eqv(new Padded(new Empty(), 'G', HAlignment.LEFT, VAlignment.TOP,  
+            3, 2)),
+        "E: Sample grid is not equivalent to a padded empty block");
+    assertFalse(
+        grid.eqv(new Padded(grid, 'G', HAlignment.LEFT, VAlignment.TOP,  
+            3, 2)),
+        "E: Sample grid is not eqv to a 0-padded version of the same grid");
+  } // testNotEqvGrid()
 
 } // class TestBlockEquiv
