@@ -28,27 +28,47 @@ import org.junit.jupiter.api.Test;
  * Tests of the various ASCII Blocks.
  */
 public class TestBlocks {
-  // +---------+---------------------------------------------------
-  // | Globals |
-  // +---------+
 
-  /** A 1x6 block, used primarily in hcomp tests. */
+  // +-------------------------+-------------------------------------
+  // | Globals for HComp tests |
+  // +-------------------------+
+
+  /** A 1x6 block. */
   static AsciiBlock ab1x6;
 
-  /** A 2x5 block, used primarily in hcomp tests. */
+  /** A 2x5 block. */
   static AsciiBlock ab2x5;
 
-  /** A 3x4 block, used primarily in hcomp tests. */
+  /** A 3x4 block. */
   static AsciiBlock ab3x4;
 
-  /** A 1x3 block, used primarily in hcomp tests. */
+  /** A 1x3 block. */
   static AsciiBlock ab1x3;
 
-  /** A 2x2 block, used primarily in hcomp tests. */
+  /** A 2x2 block. */
   static AsciiBlock ab2x2;
 
-  /** A 3x1 block, used primarily in hcomp tests. */
+  /** A 3x1 block. */
   static AsciiBlock ab3x1;
+
+  // +-------------------------+-------------------------------------
+  // | Globals for VComp tests |
+  // +-------------------------+
+
+  /** Two lines. You can guess what they are. */
+  static AsciiBlock helloworld;
+
+  /** Just one line, a bit longer. */
+  static AsciiBlock goodbye;
+
+  /** A four-by-three grid of x's. */
+  static AsciiBlock exes;
+
+  /** The single letter A. */
+  static AsciiBlock justA;
+
+  /** Mind your P's and Q's. */
+  static AsciiBlock pq;
 
   // +----------------+----------------------------------------------
   // | Initialization |
@@ -59,17 +79,25 @@ public class TestBlocks {
    */
   @BeforeAll
   public static void setup() throws Exception {
-    // Globals for HComp tests
     try {
+      // Globals for HComp tests
       ab1x6 = new Rect('6', 1, 6);
       ab2x5 = new Rect('5', 2, 5);
       ab3x4 = new Rect('4', 3, 4);
       ab1x3 = new Rect('3', 1, 3);
       ab2x2 = new Rect('2', 2, 2);
       ab3x1 = new Rect('1', 3, 1);
+      // Globals for VComp tests
+      helloworld =
+          new VComp(HAlignment.LEFT, new Line("Hello"), new Line("World"));
+      goodbye = new Line("Goodbye");
+      exes = new Rect('x', 4, 3);
+      justA = new Line("A");
+      pq = new Line("PQ");
     } catch (Exception e) {
       // Do nothing; we shouldn't get exceptions.
     } // try/catch
+
   } // setup()
 
   // +-------+-------------------------------------------------------
@@ -793,7 +821,7 @@ public class TestBlocks {
     assertNotNull(new HComp(VAlignment.TOP,
         new AsciiBlock[] {new Line("A"), new Line("B"), new Line("C")}),
         "R: Can build a horizontal composition");
-  } // tstHCompConstructor()
+  } // testHCompConstructor()
 
   /**
    * Horizontal composition, top aligned, spaces at the right.
@@ -976,7 +1004,7 @@ public class TestBlocks {
   } // testHCompEmpty()
 
   /**
-   * Make sure that horizontal composition of mutated blocks works 
+   * Make sure that horizontal composition of mutated blocks works
    * correctly.
    *
    * @throws Exception
@@ -1065,4 +1093,284 @@ public class TestBlocks {
   // | Vertical composition |
   // +----------------------+
 
+  /**
+   * Make sure that the constructor doesn't throw an error.
+   */
+  @Test
+  public void testVCompConstructor() {
+    assertNotNull(new VComp(HAlignment.LEFT,
+        new AsciiBlock[] {new Line("A"), new Line("B"), new Line("C")}),
+        "R: Can build a vertical composition");
+  } // testVCompConstructor()
+
+  /**
+   * Vertical composition, left aligned.
+   */
+  @Test
+  public void testVCompLeft() {
+    AsciiBlock block = new VComp(HAlignment.LEFT,
+        new AsciiBlock[] {goodbye, helloworld, exes, justA, pq});
+    assertEquals(7, block.width(),
+        "M: Correct width of left-aligned vertical composition");
+    assertEquals(8, block.height(),
+        "M: Correct height of left-aligned vertical composition");
+    assertEquals(
+        ""
+            + "Goodbye\n"
+            + "Hello  \n"
+            + "World  \n"
+            + "xxxx   \n"
+            + "xxxx   \n"
+            + "xxxx   \n"
+            + "A      \n"
+            + "PQ     \n",
+        TestUtils.toString(block),
+        "M: Correct contents of left-aligned vertical composition");
+  } // testVCompLeft()
+
+  /**
+   * Vertical composition, right aligned.
+   */
+  @Test
+  public void testVCompRight () {
+    AsciiBlock block = new VComp(HAlignment.RIGHT,
+        new AsciiBlock[] {goodbye, helloworld, justA, exes, justA, pq});
+    assertEquals(7, block.width(),
+        "M: Correct width of right-aligned vertical composition");
+    assertEquals(9, block.height(),
+        "M: Correct height of right-aligned vertical composition");
+    assertEquals(
+        ""
+            + "Goodbye\n"
+            + "  Hello\n"
+            + "  World\n"
+            + "      A\n"
+            + "   xxxx\n"
+            + "   xxxx\n"
+            + "   xxxx\n"
+            + "      A\n"
+            + "     PQ\n",
+        TestUtils.toString(block),
+        "M: Correct contents of right-aligned vertical composition");
+  } // testVCompRight()
+
+  /**
+   * Vertical composition, center aligned.
+   */
+  @Test
+  public void testVCompCenter() {
+    AsciiBlock block = new VComp(HAlignment.CENTER,
+        new AsciiBlock[] {pq, exes, goodbye, helloworld, justA});
+    assertEquals(7, block.width(),
+        "M: Correct width of center-aligned vertical composition");
+    assertEquals(8, block.height(),
+        "M: Correct height of center-aligned vertical composition");
+    assertEquals(
+        ""
+            + "  PQ   \n"
+            + " xxxx  \n"
+            + " xxxx  \n"
+            + " xxxx  \n"
+            + "Goodbye\n"
+            + " Hello \n"
+            + " World \n"
+            + "   A   \n",
+        TestUtils.toString(block),
+        "M: Correct contents of center-aligned vertical composition");
+  } // testVCompCenter()
+
+  /**
+   * Make sure that vertical compositions successfully change when
+   * their components change.
+   */
+  @Test
+  public void testVCompChange() throws Exception {
+    Rect a = new Rect('A', 4, 2);
+    Rect b = new Rect('B', 3, 3);
+    Rect c = new Rect('C', 2, 4);
+    AsciiBlock block = new VComp(HAlignment.RIGHT, new AsciiBlock[] {a, b, c});
+
+    // Check the original
+    assertEquals(4, block.width(),
+        "M: Correct width of block");
+    assertEquals(9, block.height(),
+        "M: Correct height of block");
+    assertEquals("""
+                 AAAA
+                 AAAA
+                  BBB
+                  BBB
+                  BBB
+                   CC
+                   CC
+                   CC
+                   CC
+                 """,
+        TestUtils.toString(block),
+        "M: Correct contents of original block");
+
+    // Make them all wider
+    a.wider();
+    b.wider();
+    c.wider();
+    assertEquals(5, block.width(),
+        "E: Correct width after widening all three");
+    assertEquals(9, block.height(),
+        "E: Correct height after widening all three");
+    assertEquals("""
+                 AAAAA
+                 AAAAA
+                  BBBB
+                  BBBB
+                  BBBB
+                   CCC
+                   CCC
+                   CCC
+                   CCC
+                 """,
+        TestUtils.toString(block),
+        "E: Correct contents after widening all three");
+
+    // Make the widest one even wider
+    a.wider();
+    a.wider();
+    assertEquals(7, block.width(),
+        "E: Correct width after widening just a");
+    assertEquals(9, block.height(),
+        "E: Correct height after widening just a");
+    assertEquals("""
+                 AAAAAAA
+                 AAAAAAA
+                    BBBB
+                    BBBB
+                    BBBB
+                     CCC
+                     CCC
+                     CCC
+                     CCC
+                 """,
+        TestUtils.toString(block),
+        "E: Correct contents after widening just a");
+
+    // Make the shorter ones wider, which shouldn't affect the overall width.
+    b.wider();
+    c.wider();
+    assertEquals(7, block.width(),
+        "E: Correct width after widening b and c");
+    assertEquals(9, block.height(),
+        "E: Correct height after widening b and c");
+    assertEquals("""
+                 AAAAAAA
+                 AAAAAAA
+                   BBBBB
+                   BBBBB
+                   BBBBB
+                    CCCC
+                    CCCC
+                    CCCC
+                    CCCC
+                 """,
+        TestUtils.toString(block),
+        "E: Correct contents after widening b and c");
+
+
+    // Make the last one shorter.
+    c.shorter();
+    c.shorter();
+    c.shorter();
+    assertEquals(7, block.width(),
+        "E: Correct width after making c shorter");
+    assertEquals(6, block.height(),
+        "E: Correct height after making c shorter");
+    assertEquals("""
+                 AAAAAAA
+                 AAAAAAA
+                   BBBBB
+                   BBBBB
+                   BBBBB
+                    CCCC
+                 """,
+        TestUtils.toString(block),
+        "E: Correct contents after making c shorter");
+
+    // Make the middle one even taller and everything a bit narrower.
+    a.taller();
+    b.taller();
+    a.narrower();
+    a.narrower();
+    b.narrower();
+    b.narrower();
+    c.narrower();
+    c.narrower();
+    assertEquals(5, block.width(),
+        "E: Correct width after making narrower and taller");
+    assertEquals(8, block.height(),
+        "E: Correct height after making narrower and taller");
+    assertEquals("""
+                 AAAAA
+                 AAAAA
+                 AAAAA
+                   BBB
+                   BBB
+                   BBB
+                   BBB
+                    CC
+                 """,
+        TestUtils.toString(block),
+        "E: Correct contents after making narrower and taller");
+
+    // Make the b's shorter again.
+    b.shorter();
+    b.shorter();
+    b.shorter();
+    assertEquals(5, block.width(),
+        "E: Correct width after making b much shorter");
+    assertEquals(5, block.height(),
+        "E: Correct height after making b much shorter");
+    assertEquals("""
+                 AAAAA
+                 AAAAA
+                 AAAAA
+                   BBB
+                    CC
+                 """,
+        TestUtils.toString(block),
+        "E: Correct contents after making b much shorter");
+  } // testVCompChange()
+
+  /**
+   * Test vertical composition with the empty block.
+   */
+  @Test
+  public void testVCompEmpty() {
+    AsciiBlock empty =
+        new VComp(HAlignment.LEFT, new AsciiBlock[] { new Empty() });
+    assertEquals(0, empty.width(),
+        "E: Correct width for vertical composition of one empty");
+    assertEquals(0, empty.height(),
+        "E: Correct height for vertical composition of one empty");
+
+    AsciiBlock nothing = new VComp(HAlignment.CENTER, new AsciiBlock[] { });
+    assertEquals(0, nothing.width(),
+        "E: Correct width for vertical composition of nothing");
+    assertEquals(0, empty.height(),
+        "E: Correct height for vertical composition of nothing");
+
+    AsciiBlock block = new VComp(HAlignment.RIGHT,
+        new AsciiBlock[] { new Empty(), helloworld, new Empty(), helloworld,
+            new Empty(), goodbye, new Empty(), new Empty() });
+    assertEquals(5, block.height(),
+        "E: Correct height for vertical composition that includes empty");
+    assertEquals(7, block.width(),
+        "E: Correct height for vertical composition that includes empty");
+    assertEquals("""
+                   Hello
+                   World
+                   Hello
+                   World
+                 Goodbye
+                 """,
+        TestUtils.toString(block),
+        "E: Correct contents for vertical composition that includes empty");
+  } // testVCompEmpty()
 } // class TestBlocks
