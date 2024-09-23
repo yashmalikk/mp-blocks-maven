@@ -1373,4 +1373,124 @@ public class TestBlocks {
         TestUtils.toString(block),
         "E: Correct contents for vertical composition that includes empty");
   } // testVCompEmpty()
+
+  // +-------+-------------------------------------------------------
+  // | HFlip |
+  // +-------+
+
+  /**
+   * Horizontal flips of the empty block.
+   */
+  @Test
+  public void testHFlipEmpty() {
+    AsciiBlock empty = new HFlip(new Empty());
+    assertEquals(0, empty.width(),
+        "M: Correct width for hflipped empty");
+    assertEquals(0, empty.height(),
+        "M: Correct height for hflipped empty");
+  } // testHFlipEmpty()
+
+  /**
+   * Horizontal flips of a single line.
+   */
+  @Test
+  public void testHFlipLine() {
+    AsciiBlock line = new Line("Hello");
+
+    AsciiBlock flipped = new HFlip(line);
+    assertEquals(5, flipped.width(),
+        "M: Correct width for hflipped hello");
+    assertEquals(1, flipped.height(),
+        "M: Correct height for hflipped hello");
+    assertEquals("olleH\n", TestUtils.toString(flipped),
+        "M: Correct contents for hflipped hello");
+
+    AsciiBlock flipflop = new HFlip(flipped);
+    assertEquals(5, flipflop.width(),
+        "M: Correct width for doubly hflipped hello");
+    assertEquals(1, flipflop.height(),
+        "M: Correct height for doubly hflipped hello");
+    assertEquals("Hello\n", TestUtils.toString(flipflop),
+        "M: Correct contents for doubly hflipped hello");
+  } // testHFlipLine()
+
+  /**
+   * Horizontal flip of various stuff.
+   */
+  @Test
+  public void testHFlipStuff() {
+    AsciiBlock abcd = 
+        new VComp(HAlignment.LEFT, new AsciiBlock[] { new Line("alfa"), 
+            new Line("bravo"), new Line("charlie"), new Line("delta") });
+
+    AsciiBlock flipped = new HFlip(abcd);
+    assertEquals(7, flipped.width(),
+        "M: Correct width for hflipped abcd");
+    assertEquals(4, flipped.height(),
+        "M: Correct height for hflipped abcd");
+    assertEquals("   afla\n  ovarb\neilrahc\n  atled\n",
+        TestUtils.toString(flipped),
+        "M: Correct contents for hflipped abcd");
+
+    AsciiBlock flipflop = new HFlip(flipped);
+    assertEquals(7, flipflop.width(),
+        "M: Correct width for doubly hflipped abcd");
+    assertEquals(4, flipflop.height(),
+        "M: Correct height for doubly hflipped abcd");
+    assertEquals("alfa   \nbravo  \ncharlie\ndelta  \n",
+        TestUtils.toString(flipflop),
+        "M: Correct contents for doubly hflipped abcd");
+
+    AsciiBlock mirror = 
+        new HComp(VAlignment.TOP, new AsciiBlock[] { flipped, abcd });
+    assertEquals(14, mirror.width(),
+        "E: Correct width for mirrored text");
+    assertEquals(4, mirror.height(),
+        "E: Correct height for mirrored text");
+    assertEquals(
+        "   aflaalfa   \n  ovarbbravo  \neilrahccharlie\n  atleddelta  \n",
+        TestUtils.toString(mirror),
+        "E: Correct contents for mirrored text");
+    
+    AsciiBlock rorrim = new HFlip(mirror);
+    assertEquals(mirror.width(), rorrim.width(),
+        "E: Correct width for hflipped mirror");
+    assertEquals(mirror.height(), rorrim.height(),
+        "E: Correct height for hflipped mirror");
+    assertEquals(TestUtils.toString(mirror), TestUtils.toString(rorrim),
+        "E: Correct contents for hflipped mirror");
+  } // testHFlipStuff
+
+  /**
+   * HFlips with stuff that changes.
+   */
+  @Test
+  public void testHFlipChange() {
+    Line a = new Line("alfa");
+    Line b = new Line("bravo");
+    Line c = new Line("charlie");
+    Line d = new Line("delta");
+    AsciiBlock abcd = new VComp(HAlignment.LEFT, new AsciiBlock[] {a, b, c, d});
+
+    AsciiBlock flipped = new HFlip(abcd);
+
+    c.update("see");
+    assertEquals(5, flipped.width(),
+        "E: Correct width of flipped abcd after shortening");
+    assertEquals(4, flipped.height(),
+        "E: Correct height of flipped abcd after shortening");
+    assertEquals(" afla\novarb\n  ees\natled\n",
+        TestUtils.toString(flipped),
+        "E: Correct contents of flipped abcd after shortening");
+
+    a.update("alphabet");
+    assertEquals(8, flipped.width(),
+        "E: Correct width of flipped abcd after widening");
+    assertEquals(4, flipped.height(),
+        "E: Correct height of flipped abcd after widening");
+    assertEquals("tebahpla\n   ovarb\n     ees\n   atled\n",
+        TestUtils.toString(flipped),
+        "E: Correct contents of flipped abcd after widening");
+  } // testHFlipChange()
+
 } // class TestBlocks
