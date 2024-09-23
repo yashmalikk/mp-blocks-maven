@@ -1493,4 +1493,104 @@ public class TestBlocks {
         "E: Correct contents of flipped abcd after widening");
   } // testHFlipChange()
 
+  // +-------+-------------------------------------------------------
+  // | VFlip |
+  // +-------+
+
+  /**
+   * Vertical flips of the empty block.
+   */
+  @Test
+  public void testVFlipEmpty() {
+    AsciiBlock empty = new VFlip(new Empty());
+    assertEquals(0, empty.width(),
+        "M: Correct width for vflipped empty");
+    assertEquals(0, empty.height(),
+        "M: Correct height for vflipped empty");
+  } // testVFlipEmpty()
+
+  /**
+   * Vertical flips of a single line.
+   */
+  @Test
+  public void testVFlipLine() {
+    AsciiBlock line = new Line("Hello");
+
+    AsciiBlock flipped = new VFlip(line);
+    assertEquals(5, flipped.width(),
+        "M: Correct width for vflipped hello");
+    assertEquals(1, flipped.height(),
+        "M: Correct height for vflipped hello");
+    assertEquals("Hello\n", TestUtils.toString(flipped),
+        "M: Correct contents for vflipped hello");
+
+    AsciiBlock flipflop = new VFlip(flipped);
+    assertEquals(5, flipflop.width(),
+        "M: Correct width for doubly vflipped hello");
+    assertEquals(1, flipflop.height(),
+        "M: Correct height for doubly vflipped hello");
+    assertEquals("Hello\n", TestUtils.toString(flipflop),
+        "M: Correct contents for doubly vflipped hello");
+  } // testVFlipLine()
+
+  /**
+   * Vertical flip of various stuff.
+   */
+  @Test
+  public void testVFlipStuff() {
+    AsciiBlock abcd = 
+        new VComp(HAlignment.LEFT, new AsciiBlock[] { new Line("alfa"), 
+            new Line("bravo"), new Line("charlie"), new Line("delta") });
+
+    AsciiBlock flipped = new VFlip(abcd);
+    assertEquals(7, flipped.width(),
+        "M: Correct width for vflipped abcd");
+    assertEquals(4, flipped.height(),
+        "M: Correct height for vflipped abcd");
+    assertEquals("delta  \ncharlie\nbravo  \nalfa   \n",
+        TestUtils.toString(flipped),
+        "M: Correct contents for vflipped abcd");
+
+    AsciiBlock flipflop = new VFlip(flipped);
+    assertEquals(7, flipflop.width(),
+        "M: Correct width for doubly vflipped abcd");
+    assertEquals(4, flipflop.height(),
+        "M: Correct height for doubly vflipped abcd");
+    assertEquals("alfa   \nbravo  \ncharlie\ndelta  \n",
+        TestUtils.toString(flipflop),
+        "M: Correct contents for doubly vflipped abcd");
+  } // testVFlipStuff
+
+  /**
+   * VFlips with stuff that changes.
+   */
+  @Test
+  public void testVFlipChange() {
+    Line a = new Line("alfa");
+    Line b = new Line("bravo");
+    Line c = new Line("charlie");
+    Line d = new Line("delta");
+    AsciiBlock abcd = new VComp(HAlignment.LEFT, new AsciiBlock[] {a, b, c, d});
+
+    AsciiBlock flipped = new VFlip(abcd);
+
+    c.update("see");
+    assertEquals(5, flipped.width(),
+        "E: Correct width of flipped abcd after shortening");
+    assertEquals(4, flipped.height(),
+        "E: Correct height of flipped abcd after shortening");
+    assertEquals("delta\nsee  \nbravo\nalfa \n",
+        TestUtils.toString(flipped),
+        "E: Correct contents of flipped abcd after shortening");
+
+    a.update("alphabet");
+    assertEquals(8, flipped.width(),
+        "E: Correct width of flipped abcd after widening");
+    assertEquals(4, flipped.height(),
+        "E: Correct height of flipped abcd after widening");
+    assertEquals("delta   \nsee     \nbravo   \nalphabet\n",
+        TestUtils.toString(flipped),
+        "E: Correct contents of flipped abcd after widening");
+  } // testVFlipChange()
+
 } // class TestBlocks
