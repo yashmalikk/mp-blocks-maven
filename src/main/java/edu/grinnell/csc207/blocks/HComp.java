@@ -1,6 +1,7 @@
 package edu.grinnell.csc207.blocks;
 
 import java.util.Arrays;
+import java.io.PrintWriter;
 
 /**
  * The horizontal composition of blocks.
@@ -60,6 +61,37 @@ public class HComp implements AsciiBlock {
   // | Methods |
   // +---------+
 
+  // helper to row
+  // Prints out what is the columns that the block is taking up (String to be concated)
+  public String check(AsciiBlock block, int row, int diff) throws Exception{
+    
+    // Checks if row is where this box actually has text.
+    if ((row >= diff) && (row <= diff + block.height())){
+      return block.row(row - diff);
+    }
+    else {
+      return (" ".repeat(block.width()));
+    }
+  }
+
+  // helper to row / check 
+  // gives the difference in spacing from top to ascii block BASED ON ALIGNMENT
+  public int giveDiff(AsciiBlock block, int totalHeight){
+    int diff = 0;
+
+    if (this.align == VAlignment.TOP){
+      diff = 0;
+    } else if (this.align == VAlignment.CENTER){
+      diff = (totalHeight - block.height()) / 2; // truncates so that second part of spacing has one extra (WHICH IS WHAT REBELSKY WANTS)
+    } else { // this.align == VAlignment.BOTTOM
+      diff = (totalHeight - block.height());
+    }
+
+    return diff;
+  }
+
+
+
   /**
    * Get one row from the block.
    *
@@ -71,7 +103,12 @@ public class HComp implements AsciiBlock {
    *   if i is outside the range of valid rows.
    */
   public String row(int i) throws Exception {
-    return "";  // STUB
+    String row = "";
+    int diff = 0;
+    for (int j = 0; j < this.blocks.length; j++){
+      row = row.concat(check(blocks[j], i, giveDiff(blocks[j], this.height())));
+    }
+    return row;
   } // row(int)
 
   /**
@@ -80,7 +117,13 @@ public class HComp implements AsciiBlock {
    * @return the number of rows
    */
   public int height() {
-    return 0;   // STUB
+    int height = 0;
+
+    for (int i = 0; i < this.blocks.length; i++){
+      height += this.blocks[i].height();
+    }
+
+    return height; 
   } // height()
 
   /**
@@ -89,7 +132,13 @@ public class HComp implements AsciiBlock {
    * @return the number of columns
    */
   public int width() {
-    return 0;   // STUB
+    int width = 0;
+
+    for (int i = 0; i < this.blocks.length; i++){
+      width += this.blocks[i].width();
+    }
+
+    return width();
   } // width()
 
   /**
@@ -102,6 +151,7 @@ public class HComp implements AsciiBlock {
    *    false otherwise.
    */
   public boolean eqv(AsciiBlock other) {
+
     return false;       // STUB
   } // eqv(AsciiBlock)
 } // class HComp
