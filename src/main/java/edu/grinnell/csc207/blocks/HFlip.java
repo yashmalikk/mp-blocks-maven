@@ -34,6 +34,7 @@ public class HFlip implements AsciiBlock {
   // | Methods |
   // +---------+
 
+  // Created by Richard
   // flips a string.
   public String strFlip(String notFlipped){
     char[] flipped = new char[notFlipped.length()];
@@ -49,6 +50,8 @@ public class HFlip implements AsciiBlock {
 
   /**
    * Get one row from the block.
+   * 
+   * !!! Implemented by Richard
    *
    * @param i the number of the row
    *
@@ -63,6 +66,8 @@ public class HFlip implements AsciiBlock {
 
   /**
    * Determine how many rows are in the block.
+   * 
+   * !!! Implemented by Richard
    *
    * @return the number of rows
    */
@@ -72,6 +77,8 @@ public class HFlip implements AsciiBlock {
 
   /**
    * Determine how many columns are in the block.
+   * 
+   * !!! Implemented by Richard
    *
    * @return the number of columns
    */

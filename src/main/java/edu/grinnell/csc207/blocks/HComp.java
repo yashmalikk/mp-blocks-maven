@@ -61,6 +61,7 @@ public class HComp implements AsciiBlock {
   // | Methods |
   // +---------+
 
+  // Created by Richard
   // helper to row
   // Prints out what is the columns that the block is taking up (String to be concated)
   public String check(AsciiBlock block, int row, int diff) throws Exception{
@@ -74,6 +75,7 @@ public class HComp implements AsciiBlock {
     }
   }
 
+  // Created by Richard
   // helper to row / check 
   // gives the difference in spacing from top to ascii block BASED ON ALIGNMENT
   public int giveDiff(AsciiBlock block, int totalHeight){
@@ -113,6 +115,8 @@ public class HComp implements AsciiBlock {
 
   /**
    * Determine how many rows are in the block.
+   * 
+   * !!! Modified by Richard
    *
    * @return the number of rows
    */
@@ -128,6 +132,8 @@ public class HComp implements AsciiBlock {
 
   /**
    * Determine how many columns are in the block.
+   * 
+   * !!! Modified by Richard
    *
    * @return the number of columns
    */

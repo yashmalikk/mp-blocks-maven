@@ -53,6 +53,8 @@ public class Grid implements AsciiBlock {
 
   /**
    * Get one row from the block.
+   * 
+   * !!! Implemented by Richard
    *
    * @param i the number of the row
    *
@@ -61,26 +63,32 @@ public class Grid implements AsciiBlock {
    * @exception Exception
    *   If the row is invalid.
    */
-  public String row(int i) throws Exception {
-    throw new Exception("Not yet implemented"); // STUB
+  public String row(int i) throws Exception { 
+    int iRowInBlock = i % this.element.height();
+
+    return this.element.row(iRowInBlock).repeat(this.hreps);
   } // row(int)
 
   /**
    * Determine how many rows are in the block.
+   * 
+   * !!! Implemented by Richard
    *
    * @return the number of rows
    */
   public int height() {
-    return 0;   // STUB
+    return this.element.height() * this.vreps;
   } // height()
 
   /**
    * Determine how many columns are in the block.
+   * 
+   * !!! Implemented by Richard
    *
    * @return the number of columns
    */
   public int width() {
-    return 0;   // STUB
+    return this.element.width() * this.hreps;
   } // width()
 
   /**
