@@ -40,13 +40,32 @@ public class TestBlockEquiv {
     } // try/catch
   } // newRect
 
-  // +----------------------------+----------------------------------
-  // | Globals for the exes tests |
-  // +----------------------------+
+  // +-------+-------------------------------------------------------
+  // | Notes |
+  // +-------+
 
-  // These tests compare 6x4 blocks of the letter X. 
-  //
-  // The A and B for the same block constructor should be the same.
+  /*
+
+  We have a bunch of tests that compare 6x4 blocks of the letter X. We'll
+  build those blocks in a variety of different ways and make sure that
+  (a) they are all `equal` to each other and (b) except when we intend
+  them to be the same, the are all not `eqv` to each other.
+
+  We name each `exesTYPE#a` or `exesTYPE#b`, such as `exesRect0a` or
+  `exesGrid3b`.
+
+  Elements that end with `b` should be equivalent to elements that end
+  with `a` and have the same prefix (or vice versa).
+
+  All of the a variables of each type should be put in the array 
+  `exesTYPEsA`. All of the b variables of each type should be put in
+  the array `exesTYPEsB`.
+
+  */
+
+  // +----------------+----------------------------------------------
+  // | Exes with Rect |
+  // +----------------+
 
   /** Using Rect */
   static AsciiBlock exesRect0a = newRect('X', 6, 4);
@@ -55,12 +74,16 @@ public class TestBlockEquiv {
   static AsciiBlock exesRect0b = newRect('X', 6, 4);
 
   /** Rects, A side. */
-  static AsciiBlock[] exesRectA =
-    new AsciiBlock[] { exesRect0a };
+  static AsciiBlock[] exesRectsA =
+    new AsciiBlock[] {exesRect0a};
 
   /** Rects, B side. */
-  static AsciiBlock[] exesRectB =
-    new AsciiBlock[] { exesRect0b };
+  static AsciiBlock[] exesRectsB =
+    new AsciiBlock[] {exesRect0b };
+
+  // +----------------+----------------------------------------------
+  // | Exes with Grid |
+  // +----------------+
 
   /** Using Grid. */
   static AsciiBlock exesGrid0a = new Grid(new Line("X"), 6, 4);
@@ -81,86 +104,349 @@ public class TestBlockEquiv {
   static AsciiBlock exesGrid3a = new Grid(new Grid(new Line("X"), 3, 2), 2, 2);
 
   /** Grids, A side. */
-  static AsciiBlock[] exesGridsA = 
-      new AsciiBlock[] { exesGrid0a, exesGrid1a, exesGrid2a, exesGrid3a };
-          
+  static AsciiBlock[] exesGridsA =
+      new AsciiBlock[] {exesGrid0a, exesGrid1a, exesGrid2a, exesGrid3a };
+
   /** Grids, B side. */
-  static AsciiBlock[] exesGridsB = 
-      new AsciiBlock[] { exesGrid0b, null, null, null };
+  static AsciiBlock[] exesGridsB =
+      new AsciiBlock[] {exesGrid0b, null, null, null };
+
+  // +-----------------+---------------------------------------------
+  // | Exes with HComp |
+  // +-----------------+
 
   /** Something to help with our horizontal composition */
   static AsciiBlock tmp1 = newRect('X', 2, 4);
 
   /** Using horizontal composition. */
   static AsciiBlock exesHComp0a =
-      new HComp(VAlignment.TOP, new AsciiBlock[] { tmp1, tmp1, tmp1 });
+      new HComp(VAlignment.TOP, new AsciiBlock[] {tmp1, tmp1, tmp1});
 
   /** Using an equivalent horizontal composition. */
   static AsciiBlock exesHComp0b =
-      new HComp(VAlignment.TOP, 
-          new AsciiBlock[] { 
-              newRect('X', 2, 4), newRect('X', 2, 4), newRect('X', 2, 4) });
+      new HComp(VAlignment.TOP,
+          new AsciiBlock[] {
+              newRect('X', 2, 4), newRect('X', 2, 4), newRect('X', 2, 4)});
 
   /** Using horizontal composition of exesComp0a with empty. */
-  static AsciiBlock exesHComp1a = 
+  static AsciiBlock exesHComp1a =
       new HComp(VAlignment.TOP,
-          new AsciiBlock[] { exesHComp0a, new Empty() });
+          new AsciiBlock[] {exesHComp0a, new Empty()});
 
   /** Using horizontal composition of exesComp0b with empty. */
-  static AsciiBlock exesHComp1b = 
+  static AsciiBlock exesHComp1b =
       new HComp(VAlignment.TOP,
-          new AsciiBlock[] { exesHComp0b, new Empty() });
+          new AsciiBlock[] {exesHComp0b, new Empty()});
 
   /** Using horizontal composition of the 0a blocks and a diff alignment. */
-  static AsciiBlock exesHComp2a = 
+  static AsciiBlock exesHComp2a =
       new HComp(VAlignment.CENTER,
-          new AsciiBlock[] { exesHComp0a, new Empty() });
+          new AsciiBlock[] {exesHComp0a, new Empty()});
 
   /** Similar. */
-  static AsciiBlock exesHComp2b = 
+  static AsciiBlock exesHComp2b =
       new HComp(VAlignment.CENTER,
-          new AsciiBlock[] { exesHComp0b, new Empty() });
+          new AsciiBlock[] {exesHComp0b, new Empty()});
 
   /** Using horizontal composition of the 0a blocks and YA alignment. */
-  static AsciiBlock exesHComp3a = 
+  static AsciiBlock exesHComp3a =
       new HComp(VAlignment.BOTTOM,
-          new AsciiBlock[] { exesHComp0a, new Empty() });
+          new AsciiBlock[] {exesHComp0a, new Empty()});
 
   /** Similar. */
-  static AsciiBlock exesHComp3b = 
+  static AsciiBlock exesHComp3b =
       new HComp(VAlignment.BOTTOM,
-          new AsciiBlock[] { exesHComp0b, new Empty() });
+          new AsciiBlock[] {exesHComp0b, new Empty()});
 
   /** A lot like 3a, except the empty is on the other side. */
   static AsciiBlock exesHComp4a =
       new HComp(VAlignment.BOTTOM,
-          new AsciiBlock[] { new Empty(), exesHComp0a });
+          new AsciiBlock[] {new Empty(), exesHComp0a});
 
    /** Ditto, but with 3a. */
   static AsciiBlock exesHComp4b =
       new HComp(VAlignment.BOTTOM,
-          new AsciiBlock[] { new Empty(), exesHComp0a });
+          new AsciiBlock[] {new Empty(), exesHComp0a});
 
   /** Horizontal composition of the 4a block with empty. */
   static AsciiBlock exesHComp5a =
       new HComp(VAlignment.CENTER,
-          new AsciiBlock[] { new Empty(), exesHComp4a, new Empty() });
+          new AsciiBlock[] {new Empty(), exesHComp4a, new Empty()});
 
   /** Horizontal composition of the 4b block with empty. */
   static AsciiBlock exesHComp5b =
       new HComp(VAlignment.CENTER,
-          new AsciiBlock[] { new Empty(), exesHComp4b, new Empty() });
+          new AsciiBlock[] {new Empty(), exesHComp4b, new Empty()});
 
   /** Like 0a, but with a different alignment. */
   static AsciiBlock exesHComp6a =
-      new HComp(VAlignment.BOTTOM, new AsciiBlock[] { tmp1, tmp1, tmp1 });
+      new HComp(VAlignment.BOTTOM, new AsciiBlock[] {tmp1, tmp1, tmp1});
 
   /** Using an equivalent horizontal composition. */
   static AsciiBlock exesHComp6b =
-      new HComp(VAlignment.BOTTOM, 
-          new AsciiBlock[] { 
-              newRect('X', 2, 4), newRect('X', 2, 4), newRect('X', 2, 4) });
+      new HComp(VAlignment.BOTTOM,
+          new AsciiBlock[] {
+              newRect('X', 2, 4), newRect('X', 2, 4), newRect('X', 2, 4)});
 
+  /** A lot like 5a, but using a different subblock. **/
+  static AsciiBlock exesHComp7a =
+      new HComp(VAlignment.CENTER,
+          new AsciiBlock[] {new Empty(), exesHComp3a, new Empty()});
+
+  /** A lot like 5b, but using a different subblock. **/
+  static AsciiBlock exesHComp7b =
+      new HComp(VAlignment.CENTER,
+          new AsciiBlock[] {new Empty(), exesHComp3b, new Empty()});
+
+  /** HComps, A side. */
+  static AsciiBlock[] exesHCompsA =
+    new AsciiBlock[] {exesHComp0a, exesHComp1a, exesHComp2a, exesHComp3a,
+        exesHComp4a, exesHComp5a, exesHComp6a, exesHComp7a };
+
+  /** HComps, B side. */
+  static AsciiBlock[] exesHCompsB =
+    new AsciiBlock[] {exesHComp0b, exesHComp1b, exesHComp2b, exesHComp3b,
+        exesHComp4b, exesHComp5b, exesHComp6b, exesHComp7b };
+
+  // +-----------------+---------------------------------------------
+  // | Exes with VComp |
+  // +-----------------+
+
+  /** Something to help with our vertical composition */
+  static AsciiBlock tmp2 = new Line("XXXXXX");
+
+  /** Using vertical composition. */
+  static AsciiBlock exesVComp0a =
+      new VComp(HAlignment.LEFT, new AsciiBlock[] {tmp2, tmp2, tmp2, tmp2});
+
+  /** Using an equivalent vertical composition. */
+  static AsciiBlock exesVComp0b =
+      new VComp(HAlignment.LEFT,
+          new AsciiBlock[] {
+              new Line("XXXXXX"), new Line("XXXXXX"),
+              new Line("XXXXXX"), new Line("XXXXXX") });
+
+  /** Using vertical composition of exesComp0a with empty. */
+  static AsciiBlock exesVComp1a =
+      new VComp(HAlignment.LEFT,
+          new AsciiBlock[] {exesVComp0a, new Empty()});
+
+  /** Using vertical composition of exesComp0b with empty. */
+  static AsciiBlock exesVComp1b =
+      new VComp(HAlignment.LEFT,
+          new AsciiBlock[] {exesVComp0b, new Empty()});
+
+  /** Using vertical composition of the 0a blocks and a diff alignment. */
+  static AsciiBlock exesVComp2a =
+      new VComp(HAlignment.CENTER,
+          new AsciiBlock[] {exesVComp0a, new Empty()});
+
+  /** Similar. */
+  static AsciiBlock exesVComp2b =
+      new VComp(HAlignment.CENTER,
+          new AsciiBlock[] {exesVComp0b, new Empty()});
+
+  /** Using vertical composition of the 0a blocks and YA alignment. */
+  static AsciiBlock exesVComp3a =
+      new VComp(HAlignment.RIGHT,
+          new AsciiBlock[] {exesVComp0a, new Empty()});
+
+  /** Similar. */
+  static AsciiBlock exesVComp3b =
+      new VComp(HAlignment.RIGHT,
+          new AsciiBlock[] {exesVComp0b, new Empty()});
+
+  /** A lot like 3a, except the empty is on the other side. */
+  static AsciiBlock exesVComp4a =
+      new VComp(HAlignment.RIGHT,
+          new AsciiBlock[] {new Empty(), exesVComp0a});
+
+   /** Ditto, but with 3a. */
+  static AsciiBlock exesVComp4b =
+      new VComp(HAlignment.RIGHT,
+          new AsciiBlock[] {new Empty(), exesVComp0a});
+
+  /** Horizontal composition of the 4a block with empty. */
+  static AsciiBlock exesVComp5a =
+      new VComp(HAlignment.CENTER,
+          new AsciiBlock[] {new Empty(), exesVComp4a, new Empty()});
+
+  /** Horizontal composition of the 4b block with empty. */
+  static AsciiBlock exesVComp5b =
+      new VComp(HAlignment.CENTER,
+          new AsciiBlock[] {new Empty(), exesVComp4b, new Empty()});
+
+  /** Like 0a, but with a different alignment. */
+  static AsciiBlock exesVComp6a =
+      new VComp(HAlignment.RIGHT, new AsciiBlock[] {tmp2, tmp2, tmp2, tmp2});
+
+  /** Using an equivalent vertical composition. */
+  static AsciiBlock exesVComp6b =
+      new VComp(HAlignment.RIGHT,
+          new AsciiBlock[] {
+              new Line("XXXXXX"), new Line("XXXXXX"),
+              new Line("XXXXXX"), new Line("XXXXXX")});
+
+  /** A lot like 5a, but using a different subblock. **/
+  static AsciiBlock exesVComp7a =
+      new VComp(HAlignment.CENTER,
+          new AsciiBlock[] {new Empty(), exesVComp3a, new Empty()});
+
+  /** A lot like 5b, but using a different subblock. **/
+  static AsciiBlock exesVComp7b =
+      new VComp(HAlignment.CENTER,
+          new AsciiBlock[] {new Empty(), exesVComp3b, new Empty()});
+
+  /** Nesting! */
+  static AsciiBlock exesVComp8a = 
+      new VComp(HAlignment.CENTER,
+          new AsciiBlock[] {
+              new VComp(HAlignment.RIGHT, new AsciiBlock[] { tmp2, tmp2 }),
+              new VComp(HAlignment.RIGHT, new AsciiBlock[] { tmp2, tmp2 })});
+
+  /** Similar nesting! */
+  static AsciiBlock exesVComp8b = 
+      new VComp(HAlignment.CENTER,
+          new AsciiBlock[] {
+              new VComp(HAlignment.RIGHT, new AsciiBlock[] { tmp2, tmp2 }),
+              new VComp(HAlignment.RIGHT, 
+                  new AsciiBlock[] { tmp2, new Line("XXXXXX") })});
+
+  /** Similar to 8a, but with a modified subblock. */
+  static AsciiBlock exesVComp9a = 
+      new VComp(HAlignment.CENTER,
+          new AsciiBlock[] {
+              new VComp(HAlignment.RIGHT, new AsciiBlock[] { tmp2, tmp2 }),
+              new VComp(HAlignment.LEFT, new AsciiBlock[] { tmp2, tmp2 })});
+
+  /** Similar */
+  static AsciiBlock exesVComp9b = 
+      new VComp(HAlignment.CENTER,
+          new AsciiBlock[] {
+              new VComp(HAlignment.RIGHT,
+                  new AsciiBlock[] { tmp2, new Line("XXXXXX") }),
+              new VComp(HAlignment.LEFT, new AsciiBlock[] { tmp2, tmp2 })});
+
+  /** VComps, A side. */
+  static AsciiBlock[] exesVCompsA =
+      new AsciiBlock[] {exesVComp0a, exesVComp1a, exesVComp2a, exesVComp3a,
+          exesVComp4a, exesVComp5a, exesVComp6a, exesVComp7a, exesVComp8a,
+          exesVComp9a};
+
+  /** VComps, B side. */
+  static AsciiBlock[] exesVCompsB =
+      new AsciiBlock[] {exesVComp0b, exesVComp1b, exesVComp2b, exesVComp3b,
+          exesVComp4b, exesVComp5b, exesVComp6b, exesVComp7b, exesVComp8b,
+          exesVComp9b};
+
+  // +-----------------+---------------------------------------------
+  // | Exes with HFlip |
+  // +-----------------+
+
+  /** Flip something. */
+  static AsciiBlock exesHFlip0a = new HFlip(exesVComp9a);
+
+  /** Flip its pair. */
+  static AsciiBlock exesHFlip0b = new HFlip(exesVComp9b);
+
+  /** Flip again. */
+  static AsciiBlock exesHFlip1a = new HFlip(exesHFlip0a);
+
+  /** Flip again. */
+  static AsciiBlock exesHFlip1b = new HFlip(exesHFlip0b);
+
+  /** And again. */
+  static AsciiBlock exesHFlip2a = new HFlip(exesHFlip1a);
+
+  /** And again. */
+  static AsciiBlock exesHFlip2b = new HFlip(new HFlip(exesHFlip0b));
+
+  /** There are never too many flips, are there? */
+  static AsciiBlock exesHFlip3a = new HFlip(exesHFlip2a);
+
+  /** And again. */
+  static AsciiBlock exesHFlip3b = new HFlip(new HFlip(new HFlip(exesHFlip0b)));
+
+  /** Once more, for good luck. */
+  static AsciiBlock exesHFlip4a = new HFlip(exesHFlip3a);
+
+  /** And again. */
+  static AsciiBlock exesHFlip4b = new HFlip(new HFlip(new HFlip(new HFlip(exesHFlip0b))));
+
+  /** Now, let's slightly modify the base value. */
+  static AsciiBlock exesHFlip5a = 
+      new HFlip(new HFlip(new HFlip(new HFlip(new HFlip(
+          new Grid(exesVComp9a, 1, 1))))));
+
+  //** Do it again. */
+  static AsciiBlock exesHFlip5b = 
+      new HFlip(new HFlip(new HFlip(new HFlip(new HFlip(
+          new Grid(exesVComp9b, 1, 1))))));
+
+  /** HFlips, A side. */
+  static AsciiBlock[] exesHFlipsA =
+      new AsciiBlock[] {exesHFlip0a, exesHFlip1a, exesHFlip2a, exesHFlip3a,
+          exesHFlip4a, exesHFlip5a};
+
+  /** HFlips, B Side. */
+  static AsciiBlock[] exesHFlipsB =
+      new AsciiBlock[] {exesHFlip0b, exesHFlip1b, exesHFlip2b, exesHFlip3b,
+          exesHFlip4b, exesHFlip5b};
+  
+  // +-----------------+---------------------------------------------
+  // | Exes with VFlip |
+  // +-----------------+
+
+  /** Flip something. */
+  static AsciiBlock exesVFlip0a = new VFlip(exesVComp9a);
+
+  /** Flip its pair. */
+  static AsciiBlock exesVFlip0b = new VFlip(exesVComp9b);
+
+  /** Flip again. */
+  static AsciiBlock exesVFlip1a = new VFlip(exesVFlip0a);
+
+  /** Flip again. */
+  static AsciiBlock exesVFlip1b = new VFlip(exesVFlip0b);
+
+  /** And again. */
+  static AsciiBlock exesVFlip2a = new VFlip(exesVFlip1a);
+
+  /** And again. */
+  static AsciiBlock exesVFlip2b = new VFlip(new VFlip(exesVFlip0b));
+
+  /** There are never too many flips, are there? */
+  static AsciiBlock exesVFlip3a = new VFlip(exesVFlip2a);
+
+  /** And again. */
+  static AsciiBlock exesVFlip3b = new VFlip(new VFlip(new VFlip(exesVFlip0b)));
+
+  /** Once more, for good luck. */
+  static AsciiBlock exesVFlip4a = new VFlip(exesVFlip3a);
+
+  /** And again. */
+  static AsciiBlock exesVFlip4b = new VFlip(new VFlip(new VFlip(new VFlip(exesVFlip0b))));
+
+  /** Now, let's slightly modify the base value. */
+  static AsciiBlock exesVFlip5a = 
+      new VFlip(new VFlip(new VFlip(new VFlip(new VFlip(
+          new Grid(exesVComp9a, 1, 1))))));
+
+  //** Do it again. */
+  static AsciiBlock exesVFlip5b = 
+      new VFlip(new VFlip(new VFlip(new VFlip(new VFlip(
+          new Grid(exesVComp9b, 1, 1))))));
+
+  /** VFlips, A side. */
+  static AsciiBlock[] exesVFlipsA =
+      new AsciiBlock[] {exesVFlip0a, exesVFlip1a, exesVFlip2a, exesVFlip3a,
+          exesVFlip4a, exesVFlip5a};
+
+  /** VFlips, B Side. */
+  static AsciiBlock[] exesVFlipsB =
+      new AsciiBlock[] {exesVFlip0b, exesVFlip1b, exesVFlip2b, exesVFlip3b,
+          exesVFlip4b, exesVFlip5b};
+  
   // +-------+-------------------------------------------------------
   // | Empty |
   // +-------+
@@ -196,13 +482,13 @@ public class TestBlockEquiv {
     assertFalse(empty.eqv(new HComp(VAlignment.CENTER, new AsciiBlock[] {})),
         "E: Empty block is not equivalent to an empty horiz composition");
     assertFalse(
-        empty.eqv(new HComp(VAlignment.BOTTOM, 
+        empty.eqv(new HComp(VAlignment.BOTTOM,
             new AsciiBlock[] {new Line("One")})),
         "M: Empty block is not equivalent to a singleton hcomp");
     assertFalse(empty.eqv(new VComp(HAlignment.LEFT, new AsciiBlock[] {})),
         "E: Empty block is not equivalent to an empty vertical composition");
     assertFalse(
-         empty.eqv(new VComp(HAlignment.RIGHT, 
+         empty.eqv(new VComp(HAlignment.RIGHT,
              new AsciiBlock[] {new Line("One")})),
         "M: Empty block is not equivalent to a singleton vcomp");
     assertFalse(empty.eqv(new HFlip(empty)),
@@ -214,7 +500,7 @@ public class TestBlockEquiv {
             VAlignment.TOP, 0, 0)),
         "E: Empty block is not equivalent to a trimmed empty block");
     assertFalse(
-        empty.eqv(new Padded(empty, 'x', HAlignment.LEFT, VAlignment.TOP,  
+        empty.eqv(new Padded(empty, 'x', HAlignment.LEFT, VAlignment.TOP,
             0, 0)),
         "E: Empty block is not equivalent to a padded empty block");
   } // testNotEqvEmpty()
@@ -242,11 +528,11 @@ public class TestBlockEquiv {
     Line line1 = new Line("Hello");
     Line line2 = new Line("Goodbye");
     line2.update("Hello");
-    assertTrue(line1.eqv(line2), 
+    assertTrue(line1.eqv(line2),
         "E: Updated lines are equivalent");
     line1.update("Hi");
     line2.update("Hi");
-    assertTrue(line2.eqv(line2), 
+    assertTrue(line2.eqv(line2),
         "E: Re-updated lines are equivalent");
   } // testEqvLineChange()
 
@@ -277,11 +563,11 @@ public class TestBlockEquiv {
         line.eqv(new HComp(VAlignment.BOTTOM, new AsciiBlock[] {line})),
         "M: Line OOO is not equivalent to a singleton hcomp of that line");
     assertFalse(
-        line.eqv(new HComp(VAlignment.BOTTOM, 
+        line.eqv(new HComp(VAlignment.BOTTOM,
             new AsciiBlock[] {line, new Empty()})),
         "M: Line OOO is not equivalent to an hcomp of that line and empty");
     assertFalse(
-        line.eqv(new HComp(VAlignment.BOTTOM, 
+        line.eqv(new HComp(VAlignment.BOTTOM,
             new AsciiBlock[] {new Line("O"), new Line("O"), new Line("O")})),
         "M: Line OOO is not equivalent to an hcomp of three O's");
     assertFalse(line.eqv(new VComp(HAlignment.LEFT, new AsciiBlock[] {})),
@@ -298,7 +584,7 @@ public class TestBlockEquiv {
             VAlignment.TOP, 3, 1)),
         "E: Line OOO is not equivalent to a trimmed line block");
     assertFalse(
-        line.eqv(new Padded(line, 'x', HAlignment.LEFT, VAlignment.TOP,  
+        line.eqv(new Padded(line, 'x', HAlignment.LEFT, VAlignment.TOP,
             3, 0)),
         "E: Line OOO is not equivalent to a padded line block");
   } // testNotEqvLine()
@@ -384,11 +670,11 @@ public class TestBlockEquiv {
     assertFalse(rect.eqv(new VComp(HAlignment.LEFT, new AsciiBlock[] {})),
         "E: Sample rect is not equivalent to an empty vertical composition");
     assertFalse(
-        rect.eqv(new VComp(HAlignment.RIGHT, 
+        rect.eqv(new VComp(HAlignment.RIGHT,
              new AsciiBlock[] {new Line("RRR")})),
         "M: Sample rect is not equivalent to a singleton vcomp");
     assertFalse(
-        rect.eqv(new VComp(HAlignment.LEFT, 
+        rect.eqv(new VComp(HAlignment.LEFT,
              new AsciiBlock[] {new Line("RRR"), new Line("RRR")})),
         "E: Sample rect is not equivalent to a similar-appearing vcomp");
     assertFalse(rect.eqv(new HFlip(rect)),
@@ -403,11 +689,11 @@ public class TestBlockEquiv {
             VAlignment.TOP, 3, 2)),
         "E: Sample rect is not equivalent to a similar trimmed rect");
     assertFalse(
-        rect.eqv(new Padded(new Empty(), 'R', HAlignment.LEFT, VAlignment.TOP,  
+        rect.eqv(new Padded(new Empty(), 'R', HAlignment.LEFT, VAlignment.TOP,
             3, 2)),
         "E: Sample rect is not equivalent to a padded empty block");
     assertFalse(
-        rect.eqv(new Padded(rect, 'R', HAlignment.LEFT, VAlignment.TOP,  
+        rect.eqv(new Padded(rect, 'R', HAlignment.LEFT, VAlignment.TOP,
             3, 2)),
         "E: Sample rect is not equivalent to a 0-padded version of the same block");
   } // testNotEqvRect()
@@ -463,11 +749,11 @@ public class TestBlockEquiv {
         box.eqv(new HComp(VAlignment.BOTTOM, new AsciiBlock[] {box})),
         "M: Sample box is not equivalent to a singleton hcomp of that box");
     assertFalse(
-        box.eqv(new HComp(VAlignment.BOTTOM, 
+        box.eqv(new HComp(VAlignment.BOTTOM,
             new AsciiBlock[] {box, new Empty()})),
         "M: Sample box is not equivalent to an hcomp of that box and empty");
     assertFalse(
-        box.eqv(new HComp(VAlignment.BOTTOM, 
+        box.eqv(new HComp(VAlignment.BOTTOM,
             new AsciiBlock[] {new Line("O"), new Line("O"), new Line("O")})),
         "M: Sample box is not equivalent to an hcomp of three O's");
     assertFalse(box.eqv(new VComp(HAlignment.LEFT, new AsciiBlock[] {})),
@@ -484,7 +770,7 @@ public class TestBlockEquiv {
             VAlignment.TOP, 3, 1)),
         "M: Sample box is not equivalent to a trimmed box block");
     assertFalse(
-        box.eqv(new Padded(box, 'x', HAlignment.LEFT, VAlignment.TOP,  
+        box.eqv(new Padded(box, 'x', HAlignment.LEFT, VAlignment.TOP,
             3, 0)),
         "M: Sample box is not equivalent to a padded box block");
   } // testNotEqvBox()
@@ -568,11 +854,11 @@ public class TestBlockEquiv {
         block.eqv(new HComp(VAlignment.BOTTOM, new AsciiBlock[] {block})),
         "E: Sample surround is not eqv to a singleton hcomp of that block");
     assertFalse(
-        block.eqv(new HComp(VAlignment.BOTTOM, 
+        block.eqv(new HComp(VAlignment.BOTTOM,
             new AsciiBlock[] {block, new Empty()})),
         "M: Sample surround is not eqv to an hcomp of that block and empty");
     assertFalse(
-        block.eqv(new HComp(VAlignment.BOTTOM, 
+        block.eqv(new HComp(VAlignment.BOTTOM,
             new AsciiBlock[] {new Line("O"), new Line("O"), new Line("O")})),
         "M: Sample surround is not equivalent to an hcomp of three O's");
     assertFalse(block.eqv(new VComp(HAlignment.LEFT, new AsciiBlock[] {})),
@@ -593,11 +879,11 @@ public class TestBlockEquiv {
             VAlignment.CENTER, 3, 3)),
         "E: Sample surround is not equivalent to a trimmed bigger surround");
     assertFalse(
-        block.eqv(new Padded(block, 'x', HAlignment.LEFT, VAlignment.TOP,  
+        block.eqv(new Padded(block, 'x', HAlignment.LEFT, VAlignment.TOP,
             3, 3)),
         "E: Sample surround is not equivalent to a padded box block");
     assertFalse(
-        block.eqv(new Padded(new Line("A"), 'A', HAlignment.LEFT, 
+        block.eqv(new Padded(new Line("A"), 'A', HAlignment.LEFT,
             VAlignment.TOP, 3, 3)),
         "E: Sample surround is not eqv to a similar looking padded box");
   } // testNotEqvSurrounded()
@@ -656,11 +942,11 @@ public class TestBlockEquiv {
     assertFalse(grid.eqv(new VComp(HAlignment.LEFT, new AsciiBlock[] {})),
         "E: Sample grid is not equivalent to an empty vertical composition");
     assertFalse(
-        grid.eqv(new VComp(HAlignment.RIGHT, 
+        grid.eqv(new VComp(HAlignment.RIGHT,
              new AsciiBlock[] {new Line("GGG")})),
         "M: Sample grid is not equivalent to a singleton vcomp");
     assertFalse(
-        grid.eqv(new VComp(HAlignment.LEFT, 
+        grid.eqv(new VComp(HAlignment.LEFT,
              new AsciiBlock[] {new Line("GGG"), new Line("GGG")})),
         "E: Sample grid is not equivalent to a similar-appearing vcomp");
     assertFalse(grid.eqv(new HFlip(grid)),
@@ -679,11 +965,11 @@ public class TestBlockEquiv {
             VAlignment.BOTTOM, 3, 2)),
         "E: Sample grid is not equivalent to a similar trimmed grid");
     assertFalse(
-        grid.eqv(new Padded(new Empty(), 'G', HAlignment.LEFT, VAlignment.TOP,  
+        grid.eqv(new Padded(new Empty(), 'G', HAlignment.LEFT, VAlignment.TOP,
             3, 2)),
         "E: Sample grid is not equivalent to a padded empty block");
     assertFalse(
-        grid.eqv(new Padded(grid, 'G', HAlignment.LEFT, VAlignment.TOP,  
+        grid.eqv(new Padded(grid, 'G', HAlignment.LEFT, VAlignment.TOP,
             3, 2)),
         "E: Sample grid is not eqv to a 0-padded version of the same grid");
   } // testNotEqvGrid()
@@ -693,144 +979,136 @@ public class TestBlockEquiv {
   // +----------------------+
 
   /**
+   * Compare two arrays that contain elements that should be equivalent.
+   *
+   * @param aSide
+   *   The first collection of elements to compare.
+   * @param bSide
+   *   The second set of elements to compare.
+   * @param type
+   *   The type of elements (e.g., "Rect" or "HComp"). Used for messages.
+   */
+  void exesCompareSame(AsciiBlock[] blocksA, AsciiBlock[] blocksB,
+      String type) {
+    for (int i = 0; i < blocksA.length; i++) {
+      if (null != blocksB[i]) {
+        assertTrue(AsciiBlock.equal(blocksA[i], blocksB[i]),
+          String.format("*: equal(exes%s%da, exes%s%db)",
+              type, i, type, i));
+        assertTrue(AsciiBlock.equal(blocksB[i], blocksA[i]),
+          String.format("*: equal(exes%s%db, exes%s%da)",
+              type, i, type, i));
+        assertTrue(AsciiBlock.eqv(blocksA[i], blocksB[i]),
+          String.format("M: eqv(exes%s%da, exes%s%db)",
+              type, i, type, i));
+        assertTrue(AsciiBlock.eqv(blocksB[i], blocksA[i]),
+          String.format("M: eqv(exes%s%db, exes%s%da)",
+              type, i, type, i));
+      } // if
+    } // for
+  } // exesCompareSame
+
+  /**
+   * Compare different blocks in the same type for equivalence.
+   * The assumption is that all pairs should be different.
+   *
+   * @param blocks
+   *   The collection of blocks to compare.
+   *
+   * @param type
+   *   The type of elements (e.g., "Rect" or "HComp"). Used for messages.
+   */
+  void exesCompareDifferent(AsciiBlock[] blocks, String type) {
+    for (int i = 0; i < blocks.length; i++) {
+      for (int j = i + 1; j < blocks.length; j++) {
+        assertTrue(AsciiBlock.equal(blocks[i], blocks[j]),
+          String.format("*: equal(exes%s%da, exes%s%da)",
+              type, i, type, j));
+        assertTrue(AsciiBlock.equal(blocks[j], blocks[i]),
+          String.format("*: equal(exes%s%da, exes%s%da)",
+              type, j, type, i));
+        assertFalse(AsciiBlock.eqv(blocks[i], blocks[j]),
+          String.format("M: eqv(exes%s%da, exes%s%da)",
+              type, i, type, j));
+        assertFalse(AsciiBlock.eqv(blocks[j], blocks[i]),
+          String.format("M: eqv(exes%s%da, exes%s%da)",
+              type, j, type, i));
+      } // for j
+    } // for i
+  } // exesCompareDifferent(AsciiBlock[], String)
+
+  /**
+   * Compare different blocks in the different type for equivalence.
+   * The assumption is that all pairs should be different.
+   *
+   * @param blocksOne
+   *   The first collection of blocks to compare.
+   * @param typeOne
+   *   The type of elements in blocksOne (e.g., "Rect" or "HComp").
+   *   Used for messages.
+   * @param blocksTwo
+   *   The second collection of blocks to compare.
+   * @param typeOne
+   *   The type of elements in blocksTwo (e.g., "Rect" or "HComp").
+   *   Used for messages.
+   */
+  void exesCompareDifferent(AsciiBlock[] blocksOne, String typeOne,
+      AsciiBlock[] blocksTwo, String typeTwo) {
+    for (int i = 0; i < blocksOne.length; i++) {
+      for (int j = 0; j < blocksTwo.length; j++) {
+        assertTrue(AsciiBlock.equal(blocksOne[i], blocksTwo[j]),
+          String.format("*: equal(exes%s%da, exes%s%da)",
+              typeOne, i, typeTwo, j));
+        assertTrue(AsciiBlock.equal(blocksTwo[j], blocksOne[i]),
+          String.format("*: equal(exes%s%da, exes%s%da)",
+              typeTwo, j, typeOne, i));
+        assertFalse(AsciiBlock.eqv(blocksOne[i], blocksTwo[j]),
+          String.format("M: eqv(exes%s%da, exes%s%da)",
+              typeOne, i, typeTwo, j));
+        assertFalse(AsciiBlock.eqv(blocksTwo[j], blocksOne[i]),
+          String.format("M: eqv(exes%s%da, exes%s%da)",
+              typeTwo, j, typeOne, i));
+      } // for j
+    } // for i
+  } // exesCompareDifferent(AsciiBlock[], String)
+
+  /**
    * Rectangles vs rectangles that should be the same.
    */
   @Test
   public void exesRectVsRectSame() {
-    assertTrue(AsciiBlock.equal(exesRect0a, exesRect0b),
-        "*: equal(exesRect0a, exesRect0b)");
-    assertTrue(AsciiBlock.equal(exesRect0b, exesRect0a),
-        "*: equal(exesRect0b, exesRect0a)");
-    assertTrue(AsciiBlock.eqv(exesRect0a, exesRect0b),
-        "*: eqv(exesRect0a, exesRect0b)");
-    assertTrue(AsciiBlock.eqv(exesRect0b, exesRect0a),
-        "*: eqv(exesRect1g, exesRect0a)");
-  } // exesRectVsRectSame
+    exesCompareSame(exesRectsA, exesRectsB, "Rect");
+  } // exesRectvsRectSame
+  /**
+   * Rectangles vs rectangles that should be different.
+   */
+  @Test
+  public void exesRectVsRectDiff() {
+    exesCompareDifferent(exesRectsA, "Rect");
+  } // exesRectVsRectDiff
 
   /**
-   * Rectangles vs grids.
+   * Rectangles vs grids (and vice versa).
    */
   @Test
   public void exesRectVsGrid() {
-    assertTrue(AsciiBlock.equal(exesRect0a, exesGrid0a),
-        "*: equal(exesRect0a, exesGrid0a)");
-    assertTrue(AsciiBlock.equal(exesRect0a, exesGrid1a),
-        "*: equal(exesRect0a, exesGrid1a)");
-    assertTrue(AsciiBlock.equal(exesRect0a, exesGrid2a),
-        "*: equal(exesRect0a, exesGrid2a)");
-    assertTrue(AsciiBlock.equal(exesRect0a, exesGrid3a),
-        "*: equal(exesRect0a, exesGrid3a)");
-    assertFalse(AsciiBlock.eqv(exesRect0a, exesGrid0a),
-        "M: eqv(exesRect0a, exesGrid0a)");
-    assertFalse(AsciiBlock.eqv(exesRect0a, exesGrid1a),
-        "M: eqv(exesRect0a, exesGrid1a)");
-    assertFalse(AsciiBlock.eqv(exesRect0a, exesGrid2a),
-        "M: eqv(exesRect0a, exesGrid2a)");
-    assertFalse(AsciiBlock.eqv(exesRect0a, exesGrid3a),
-        "M: eqv(exesRect0a, exesGrid3a)");
+    exesCompareDifferent(exesRectsA, "Rect", exesGridsA, "Grid");
   } // exesRectVsGrid
-
-  /**
-   * Grids vs rectangles.
-   */
-  @Test
-  public void exesGridVsRect() {
-    assertTrue(AsciiBlock.equal(exesGrid0a, exesRect0a),
-        "*: equal(exesGrid0a, exesRect0a)");
-    assertTrue(AsciiBlock.equal(exesGrid1a, exesRect0a),
-        "*: equal(exesGrid1a, exesRect0a)");
-    assertTrue(AsciiBlock.equal(exesGrid2a, exesRect0a),
-        "*: equal(exesGrid2a, exesRect0a)");
-    assertTrue(AsciiBlock.equal(exesGrid3a, exesRect0a),
-        "*: equal(exesGrid3a, exesRect0a)");
-
-    assertFalse(AsciiBlock.eqv(exesGrid0a, exesRect0a),
-        "M: eqv(exesGrid0a, exesRect0a)");
-    assertFalse(AsciiBlock.eqv(exesGrid1a, exesRect0a),
-        "M: eqv(exesGrid1a, exesRect0a)");
-    assertFalse(AsciiBlock.eqv(exesGrid2a, exesRect0a),
-        "M: eqv(exesGrid2a, exesRect0a)");
-    assertFalse(AsciiBlock.eqv(exesGrid3a, exesRect0a),
-        "M: eqv(exesGrid3a, exesRect0a)");
-  } // exesGridVsRect()
 
   /**
    * Grids vs grids that are the same.
    */
   @Test
   public void exesGridVsGridSame() {
-    assertTrue(AsciiBlock.equal(exesGrid0a, exesGrid0b),
-        "*: equal(exesGrid0a, exesGrid0b)");
-    assertTrue(AsciiBlock.equal(exesGrid0b, exesGrid0a),
-        "*: equal(exesGrid0b, exesGrid0a)");
-    assertTrue(AsciiBlock.equal(exesGrid1a, exesGrid1b),
-        "*: equal(exesGrid1a, exesGrid1b)");
-    assertTrue(AsciiBlock.equal(exesGrid1b, exesGrid1a),
-        "*: equal(exesGrid1b, exesGrid1a)");
-
-    assertTrue(AsciiBlock.eqv(exesGrid0a, exesGrid0b),
-        "M: eqv(exesGrid0a, exesGrid0b)");
-    assertTrue(AsciiBlock.eqv(exesGrid0b, exesGrid0a),
-        "M: eqv(exesGrid0b, exesGrid0a)");
-    assertTrue(AsciiBlock.eqv(exesGrid1a, exesGrid1b),
-        "M: eqv(exesGrid1a, exesGrid1b)");
-    assertTrue(AsciiBlock.eqv(exesGrid1b, exesGrid1a),
-        "M: eqv(exesGrid1b, exesGrid1a)");
+    exesCompareSame(exesGridsA, exesGridsB, "Grid");
   } // exesGridVsGridSame()
 
   /**
    * Grids vs grids that are different.
    */
+  @Test
   public void exesGridVsGridDiff() {
-    assertTrue(AsciiBlock.equal(exesGrid0a, exesGrid1a),
-        "*: equal(exesGrid0a, exesGrid1a)");
-    assertTrue(AsciiBlock.equal(exesGrid1a, exesGrid0a),
-        "*: equal(exesGrid1a, exesGrid0a)");
-    assertTrue(AsciiBlock.equal(exesGrid0a, exesGrid2a),
-        "*: equal(exesGrid0a, exesGrid2a)");
-    assertTrue(AsciiBlock.equal(exesGrid2a, exesGrid0a),
-        "*: equal(exesGrid2a, exesGrid0a)");
-    assertTrue(AsciiBlock.equal(exesGrid1a, exesGrid2a),
-        "*: equal(exesGrid0a, exesGrid2a)");
-    assertTrue(AsciiBlock.equal(exesGrid2a, exesGrid1a),
-        "*: equal(exesGrid2a, exesGrid0a)");
-    assertTrue(AsciiBlock.equal(exesGrid0a, exesGrid3a),
-        "*: equal(exesGrid0a, exesGrid3a)");
-    assertTrue(AsciiBlock.equal(exesGrid3a, exesGrid0a),
-        "*: equal(exesGrid3a, exesGrid0a)");
-    assertTrue(AsciiBlock.equal(exesGrid1a, exesGrid3a),
-        "*: equal(exesGrid1a, exesGrid3a)");
-    assertTrue(AsciiBlock.equal(exesGrid3a, exesGrid1a),
-        "*: equal(exesGrid3a, exesGrid1a)");
-    assertTrue(AsciiBlock.equal(exesGrid2a, exesGrid3a),
-        "*: equal(exesGrid2a, exesGrid3a)");
-    assertTrue(AsciiBlock.equal(exesGrid3a, exesGrid2a),
-        "*: equal(exesGrid3a, exesGrid2a)");
-
-    assertFalse(AsciiBlock.eqv(exesGrid0a, exesGrid1a),
-        "M: eqv(exesGrid0a, exesGrid1a)");
-    assertFalse(AsciiBlock.eqv(exesGrid1a, exesGrid0a),
-        "M: eqv(exesGrid1a, exesGrid0a)");
-    assertFalse(AsciiBlock.eqv(exesGrid0a, exesGrid2a),
-        "M: eqv(exesGrid0a, exesGrid2a)");
-    assertFalse(AsciiBlock.eqv(exesGrid2a, exesGrid0a),
-        "M: eqv(exesGrid2a, exesGrid0a)");
-    assertFalse(AsciiBlock.eqv(exesGrid1a, exesGrid2a),
-        "M: eqv(exesGrid0a, exesGrid2a)");
-    assertFalse(AsciiBlock.eqv(exesGrid2a, exesGrid1a),
-        "M: eqv(exesGrid2a, exesGrid0a)");
-    assertFalse(AsciiBlock.eqv(exesGrid0a, exesGrid3a),
-        "M: eqv(exesGrid0a, exesGrid3a)");
-    assertFalse(AsciiBlock.eqv(exesGrid3a, exesGrid0a),
-        "M: eqv(exesGrid3a, exesGrid0a)");
-    assertFalse(AsciiBlock.eqv(exesGrid1a, exesGrid3a),
-        "M: eqv(exesGrid1a, exesGrid3a)");
-    assertFalse(AsciiBlock.eqv(exesGrid3a, exesGrid1a),
-        "M: eqv(exesGrid3a, exesGrid1a)");
-    assertFalse(AsciiBlock.eqv(exesGrid2a, exesGrid3a),
-        "M: eqv(exesGrid2a, exesGrid3a)");
-    assertFalse(AsciiBlock.eqv(exesGrid3a, exesGrid2a),
-        "M: eqv(exesGrid3a, exesGrid2a)");
+    exesCompareDifferent(exesGridsA, "Grid");
   } // exesGridvsGridDiff
 
   /**
@@ -838,164 +1116,151 @@ public class TestBlockEquiv {
    */
   @Test
   public void exesRectVsHComp() {
-    assertTrue(AsciiBlock.equal(exesRect0a, exesHComp0a),
-        "*: equal(exesRect0a, exesHComp0a)");
-    assertTrue(AsciiBlock.equal(exesRect0a, exesHComp1a),
-        "*: equal(exesRect0a, exesHComp1a)");
-    assertTrue(AsciiBlock.equal(exesRect0a, exesHComp2a),
-        "*: equal(exesRect0a, exesHComp2a)");
-    assertTrue(AsciiBlock.equal(exesRect0a, exesHComp3a),
-        "*: equal(exesRect0a, exesHComp3a)");
-    assertTrue(AsciiBlock.equal(exesRect0a, exesHComp4a),
-        "*: equal(exesRect0a, exesHComp4a)");
-    assertTrue(AsciiBlock.equal(exesRect0a, exesHComp5a),
-        "*: equal(exesRect0a, exesHComp5a)");
-    assertTrue(AsciiBlock.equal(exesRect0a, exesHComp6a),
-        "*: equal(exesRect0a, exesHComp6a)");
-
-    assertFalse(AsciiBlock.eqv(exesRect0a, exesHComp0a),
-        "M: eqv(exesRect0a, exesHComp0a)");
-    assertFalse(AsciiBlock.eqv(exesRect0a, exesHComp1a),
-        "M: eqv(exesRect0a, exesHComp1a)");
-    assertFalse(AsciiBlock.eqv(exesRect0a, exesHComp2a),
-        "M: eqv(exesRect0a, exesHComp2a)");
-    assertFalse(AsciiBlock.eqv(exesRect0a, exesHComp3a),
-        "M: eqv(exesRect0a, exesHComp3a)");
-    assertFalse(AsciiBlock.eqv(exesRect0a, exesHComp4a),
-        "M: eqv(exesRect0a, exesHComp4a)");
-    assertFalse(AsciiBlock.eqv(exesRect0a, exesHComp5a),
-        "M: eqv(exesRect0a, exesHComp5a)");
-    assertFalse(AsciiBlock.eqv(exesRect0a, exesHComp6a),
-        "M: eqv(exesRect0a, exesHComp6a)");
+    exesCompareDifferent(exesRectsA, "Rect", exesHCompsA, "HComp");
   } // exesRectVsHComp()
 
   /**
-   * HComp vs Rect
-   */
-  @Test
-  public void exesHCompVsRect() {
-    assertTrue(AsciiBlock.equal(exesHComp0a, exesRect0a),
-        "M: equal(exesHComp0a, exesRect0a)");
-    assertTrue(AsciiBlock.equal(exesHComp1a, exesRect0a),
-        "M: equal(exesHComp1a, exesRect0a)");
-    assertTrue(AsciiBlock.equal(exesHComp2a, exesRect0a),
-        "M: equal(exesHComp2a, exesRect0a)");
-    assertTrue(AsciiBlock.equal(exesHComp3a, exesRect0a),
-        "M: equal(exesHComp3a, exesRect0a)");
-    assertTrue(AsciiBlock.equal(exesHComp4a, exesRect0a),
-        "M: equal(exesHComp4a, exesRect0a)");
-    assertTrue(AsciiBlock.equal(exesHComp5a, exesRect0a),
-        "M: equal(exesHComp5a, exesRect0a)");
-    assertTrue(AsciiBlock.equal(exesHComp6a, exesRect0a),
-        "M: equal(exesHComp6a, exesRect0a)");
-
-    assertFalse(AsciiBlock.eqv(exesHComp0a, exesRect0a),
-        "M: eqv(exesHComp0a, exesRect0a)");
-    assertFalse(AsciiBlock.eqv(exesHComp1a, exesRect0a),
-        "M: eqv(exesHComp1a, exesRect0a)");
-    assertFalse(AsciiBlock.eqv(exesHComp2a, exesRect0a),
-        "M: eqv(exesHComp2a, exesRect0a)");
-    assertFalse(AsciiBlock.eqv(exesHComp3a, exesRect0a),
-        "M: eqv(exesHComp3a, exesRect0a)");
-    assertFalse(AsciiBlock.eqv(exesHComp4a, exesRect0a),
-        "M: eqv(exesHComp4a, exesRect0a)");
-    assertFalse(AsciiBlock.eqv(exesHComp5a, exesRect0a),
-        "M: eqv(exesHComp5a, exesRect0a)");
-    assertFalse(AsciiBlock.eqv(exesHComp6a, exesRect0a),
-        "M: eqv(exesHComp6a, exesRect0a)");
-  } // exesHCompVsRect()
-
-  /**
-   * Grid vs HComp.
-   *
-   * The combinatorial explosion starts (unless you think it started
-   * already).
+   * Grids vs HComps.
    */
   @Test
   public void exesGridVsHComp() {
-    assertTrue(AsciiBlock.equal(exesGrid0a, exesHComp0a),
-        "*: equal(exesGrid0a, exesHComp0a)");
-    assertTrue(AsciiBlock.equal(exesGrid0a, exesHComp1a),
-        "*: equal(exesGrid0a, exesHComp1a)");
-    assertTrue(AsciiBlock.equal(exesGrid0a, exesHComp2a),
-        "*: equal(exesGrid0a, exesHComp2a)");
-    assertTrue(AsciiBlock.equal(exesGrid0a, exesHComp3a),
-        "*: equal(exesGrid0a, exesHComp3a)");
-    assertTrue(AsciiBlock.equal(exesGrid0a, exesHComp4a),
-        "*: equal(exesGrid0a, exesHComp4a)");
-    assertTrue(AsciiBlock.equal(exesGrid0a, exesHComp5a),
-        "*: equal(exesGrid0a, exesHComp5a)");
-    assertTrue(AsciiBlock.equal(exesGrid0a, exesHComp6a),
-        "*: equal(exesGrid0a, exesHComp6a)");
-
-    assertTrue(AsciiBlock.equal(exesGrid1a, exesHComp0a),
-        "*: equal(exesGrid1a, exesHComp0a)");
-    assertTrue(AsciiBlock.equal(exesGrid1a, exesHComp1a),
-        "*: equal(exesGrid1a, exesHComp1a)");
-    assertTrue(AsciiBlock.equal(exesGrid1a, exesHComp2a),
-        "*: equal(exesGrid1a, exesHComp2a)");
-    assertTrue(AsciiBlock.equal(exesGrid1a, exesHComp3a),
-        "*: equal(exesGrid1a, exesHComp3a)");
-    assertTrue(AsciiBlock.equal(exesGrid1a, exesHComp4a),
-        "*: equal(exesGrid1a, exesHComp4a)");
-    assertTrue(AsciiBlock.equal(exesGrid1a, exesHComp5a),
-        "*: equal(exesGrid1a, exesHComp5a)");
-    assertTrue(AsciiBlock.equal(exesGrid1a, exesHComp6a),
-        "*: equal(exesGrid1a, exesHComp6a)");
-
-    assertTrue(AsciiBlock.equal(exesGrid2a, exesHComp0a),
-        "*: equal(exesGrid2a, exesHComp0a)");
-    assertTrue(AsciiBlock.equal(exesGrid2a, exesHComp1a),
-        "*: equal(exesGrid2a, exesHComp1a)");
-    assertTrue(AsciiBlock.equal(exesGrid2a, exesHComp2a),
-        "*: equal(exesGrid2a, exesHComp2a)");
-    assertTrue(AsciiBlock.equal(exesGrid2a, exesHComp3a),
-        "*: equal(exesGrid2a, exesHComp3a)");
-    assertTrue(AsciiBlock.equal(exesGrid2a, exesHComp4a),
-        "*: equal(exesGrid2a, exesHComp4a)");
-    assertTrue(AsciiBlock.equal(exesGrid2a, exesHComp5a),
-        "*: equal(exesGrid2a, exesHComp5a)");
-    assertTrue(AsciiBlock.equal(exesGrid2a, exesHComp6a),
-        "*: equal(exesGrid2a, exesHComp6a)");
-
-    assertTrue(AsciiBlock.equal(exesGrid0a, exesHComp0a),
-        "*: equal(exesGrid0a, exesHComp0a)");
-    assertTrue(AsciiBlock.equal(exesGrid0a, exesHComp1a),
-        "*: equal(exesGrid0a, exesHComp1a)");
-    assertTrue(AsciiBlock.equal(exesGrid0a, exesHComp2a),
-        "*: equal(exesGrid0a, exesHComp2a)");
-    assertTrue(AsciiBlock.equal(exesGrid0a, exesHComp3a),
-        "*: equal(exesGrid0a, exesHComp3a)");
-    assertTrue(AsciiBlock.equal(exesGrid0a, exesHComp4a),
-        "*: equal(exesGrid0a, exesHComp4a)");
-    assertTrue(AsciiBlock.equal(exesGrid0a, exesHComp5a),
-        "*: equal(exesGrid0a, exesHComp5a)");
-    assertTrue(AsciiBlock.equal(exesGrid0a, exesHComp6a),
-        "*: equal(exesGrid0a, exesHComp6a)");
-
+    exesCompareDifferent(exesGridsA, "Grid", exesHCompsA, "HComp");
   } // exesGridVsHComp()
-
-  /**
-   * HComp vs. Grid
-   */
-  @Test
-  public void exesHCompVsGrid() {
-  } // exesHCompVsGrid()
 
   /**
    * HComp vs HComp where they should be the same.
    */
   @Test
   public void exesHCompVsHCompSame() {
+    exesCompareSame(exesHCompsA, exesHCompsB, "HComp");
   } // exesHCompVsHCompSame()
 
   /**
-   * HComp vs HComp where they should be different. 
-   *
-   * The combinatorial explosion increases.
+   * HComp vs HComp where they should be different.
    */
   @Test
   public void exesHCompVsHCompDiff() {
+    exesCompareDifferent(exesHCompsA, "HComp");
   } // exesHCompVsHCompDiff()
+
+  /** Rectangles vs VComps. */
+  @Test
+  public void exesRectVsVComp() {
+    exesCompareDifferent(exesRectsA, "Rect", exesVCompsA, "VComp");
+  } // exesRectsVsVComp()
+
+  /** Grids vs VComps. */
+  @Test
+  public void exesGridVsVComp() {
+    exesCompareDifferent(exesGridsA, "Grid", exesVCompsA, "VComp");
+  } // exesGridVsVComp()
+
+  /** HComps vs VComps. */
+  @Test
+  public void exesHCompVsVComp() {
+    exesCompareDifferent(exesHCompsA, "HComp", exesVCompsA, "VComp");
+  } // exesHCompVsVComp()
+
+  /**
+   * VComps vs VComps (which should be the same).
+   */
+  @Test
+  public void exesVCompVsVCompSame() {
+    exesCompareSame(exesVCompsA, exesVCompsB, "VComp");
+  } // exesVCompVsVCompSame()
+
+  /**
+   * VComp vs VComp where they should be different.
+   */
+  @Test
+  public void exesVCompVsVCompDiff() {
+    exesCompareDifferent(exesVCompsA, "VComp");
+  } // exesVCompVsVCompDiff()
+
+  /** Rectangles vs HFlips. */
+  @Test
+  public void exesRectVsHFlip() {
+    exesCompareDifferent(exesRectsA, "Rect", exesHFlipsA, "HFlip");
+  } // exesRectsVsHFlip()
+
+  /** Grids vs HFlips. */
+  @Test
+  public void exesGridVsHFlip() {
+    exesCompareDifferent(exesGridsA, "Grid", exesHFlipsA, "HFlip");
+  } // exesGridVsHFlip()
+
+  /** HComps vs HFlips. */
+  @Test
+  public void exesHCompVsHFlip() {
+    exesCompareDifferent(exesHCompsA, "HComp", exesHFlipsA, "HFlip");
+  } // exesHCompVsHFlip()
+
+  /** VComps vs HFlips. */
+  @Test
+  public void exesVCompVsHFlip() {
+    exesCompareDifferent(exesVCompsA, "VComp", exesHFlipsA, "HFlip");
+  } // exesVCompVsHFlip()
+
+  /**
+   * HFlips vs HFlips (which should be the same).
+   */
+  @Test
+  public void exesHFlipVsHFlipSame() {
+    exesCompareSame(exesHFlipsA, exesHFlipsB, "HFlip");
+  } // exesHFlipVsHFlipSame()
+
+  /**
+   * HFlip vs HFlip where they should be different.
+   */
+  @Test
+  public void exesHFlipVsHFlipDiff() {
+    exesCompareDifferent(exesHFlipsA, "HFlip");
+  } // exesHFlipVsHFlipDiff()
+
+  /** Rectangles vs VFlips. */
+  @Test
+  public void exesRectVsVFlip() {
+    exesCompareDifferent(exesRectsA, "Rect", exesVFlipsA, "VFlip");
+  } // exesRectsVsVFlip()
+
+  /** Grids vs VFlips. */
+  @Test
+  public void exesGridVsVFlip() {
+    exesCompareDifferent(exesGridsA, "Grid", exesVFlipsA, "VFlip");
+  } // exesGridVsVFlip()
+
+  /** HComps vs VFlips. */
+  @Test
+  public void exesHCompVsVFlip() {
+    exesCompareDifferent(exesHCompsA, "HComp", exesVFlipsA, "VFlip");
+  } // exesHCompVsVFlip()
+
+  /** VComps vs VFlips. */
+  @Test
+  public void exesVCompVsVFlip() {
+    exesCompareDifferent(exesVCompsA, "VComp", exesVFlipsA, "VFlip");
+  } // exesVCompVsVFlip()
+
+  /** HFlips vs VFlips. */
+  @Test
+  public void exesHFlipVsVFlip() {
+    exesCompareDifferent(exesHFlipsA, "HFlip", exesVFlipsA, "VFlip");
+  } // exesHFlipVsVFlip()
+
+  /**
+   * VFlips vs VFlips (which should be the same).
+   */
+  @Test
+  public void exesVFlipVsVFlipSame() {
+    exesCompareSame(exesVFlipsA, exesVFlipsB, "VFlip");
+  } // exesVFlipVsVFlipSame()
+
+  /**
+   * VFlip vs VFlip where they should be different.
+   */
+  @Test
+  public void exesVFlipVsVFlipDiff() {
+    exesCompareDifferent(exesVFlipsA, "VFlip");
+  } // exesVFlipVsVFlipDiff()
 
 } // class TestBlockEquiv
