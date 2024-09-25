@@ -26,6 +26,142 @@ import org.junit.jupiter.api.Test;
  */
 public class TestBlockEquiv {
   // +-------+-------------------------------------------------------
+  // | Hacks |
+  // +-------+
+
+  /**
+   * Create rectangles without throwing exceptions.
+   */
+  static final AsciiBlock newRect(char ch, int width, int height) {
+    try {
+      return new Rect(ch, width, height);
+    } catch (Exception e) {
+      return new Line(String.format("Rect(%c, %d, %d)", ch, width, height));
+    } // try/catch
+  } // newRect
+
+  // +----------------------------+----------------------------------
+  // | Globals for the exes tests |
+  // +----------------------------+
+
+  // These tests compare 6x4 blocks of the letter X. 
+  //
+  // The A and B for the same block constructor should be the same.
+
+  /** Using Rect */
+  static AsciiBlock exesRect0a = newRect('X', 6, 4);
+
+  /** Using Rect again. */
+  static AsciiBlock exesRect0b = newRect('X', 6, 4);
+
+  /** Rects, A side. */
+  static AsciiBlock[] exesRectA =
+    new AsciiBlock[] { exesRect0a };
+
+  /** Rects, B side. */
+  static AsciiBlock[] exesRectB =
+    new AsciiBlock[] { exesRect0b };
+
+  /** Using Grid. */
+  static AsciiBlock exesGrid0a = new Grid(new Line("X"), 6, 4);
+
+  /** Using Grid again. */
+  static AsciiBlock exesGrid0b = new Grid(new Line("X"), 6, 4);
+
+  /** Using Grid and Rect0a. */
+  static AsciiBlock exesGrid1a = new Grid(exesRect0a, 1, 1);
+
+  /** Using Grid and Rect0b. */
+  static AsciiBlock exesGrid1b = new Grid(exesRect0b, 1, 1);
+
+  /** Using a different Grid. */
+  static AsciiBlock exesGrid2a = new Grid(newRect('X', 3, 2), 2, 2);
+
+  /** And another. */
+  static AsciiBlock exesGrid3a = new Grid(new Grid(new Line("X"), 3, 2), 2, 2);
+
+  /** Grids, A side. */
+  static AsciiBlock[] exesGridsA = 
+      new AsciiBlock[] { exesGrid0a, exesGrid1a, exesGrid2a, exesGrid3a };
+          
+  /** Grids, B side. */
+  static AsciiBlock[] exesGridsB = 
+      new AsciiBlock[] { exesGrid0b, null, null, null };
+
+  /** Something to help with our horizontal composition */
+  static AsciiBlock tmp1 = newRect('X', 2, 4);
+
+  /** Using horizontal composition. */
+  static AsciiBlock exesHComp0a =
+      new HComp(VAlignment.TOP, new AsciiBlock[] { tmp1, tmp1, tmp1 });
+
+  /** Using an equivalent horizontal composition. */
+  static AsciiBlock exesHComp0b =
+      new HComp(VAlignment.TOP, 
+          new AsciiBlock[] { 
+              newRect('X', 2, 4), newRect('X', 2, 4), newRect('X', 2, 4) });
+
+  /** Using horizontal composition of exesComp0a with empty. */
+  static AsciiBlock exesHComp1a = 
+      new HComp(VAlignment.TOP,
+          new AsciiBlock[] { exesHComp0a, new Empty() });
+
+  /** Using horizontal composition of exesComp0b with empty. */
+  static AsciiBlock exesHComp1b = 
+      new HComp(VAlignment.TOP,
+          new AsciiBlock[] { exesHComp0b, new Empty() });
+
+  /** Using horizontal composition of the 0a blocks and a diff alignment. */
+  static AsciiBlock exesHComp2a = 
+      new HComp(VAlignment.CENTER,
+          new AsciiBlock[] { exesHComp0a, new Empty() });
+
+  /** Similar. */
+  static AsciiBlock exesHComp2b = 
+      new HComp(VAlignment.CENTER,
+          new AsciiBlock[] { exesHComp0b, new Empty() });
+
+  /** Using horizontal composition of the 0a blocks and YA alignment. */
+  static AsciiBlock exesHComp3a = 
+      new HComp(VAlignment.BOTTOM,
+          new AsciiBlock[] { exesHComp0a, new Empty() });
+
+  /** Similar. */
+  static AsciiBlock exesHComp3b = 
+      new HComp(VAlignment.BOTTOM,
+          new AsciiBlock[] { exesHComp0b, new Empty() });
+
+  /** A lot like 3a, except the empty is on the other side. */
+  static AsciiBlock exesHComp4a =
+      new HComp(VAlignment.BOTTOM,
+          new AsciiBlock[] { new Empty(), exesHComp0a });
+
+   /** Ditto, but with 3a. */
+  static AsciiBlock exesHComp4b =
+      new HComp(VAlignment.BOTTOM,
+          new AsciiBlock[] { new Empty(), exesHComp0a });
+
+  /** Horizontal composition of the 4a block with empty. */
+  static AsciiBlock exesHComp5a =
+      new HComp(VAlignment.CENTER,
+          new AsciiBlock[] { new Empty(), exesHComp4a, new Empty() });
+
+  /** Horizontal composition of the 4b block with empty. */
+  static AsciiBlock exesHComp5b =
+      new HComp(VAlignment.CENTER,
+          new AsciiBlock[] { new Empty(), exesHComp4b, new Empty() });
+
+  /** Like 0a, but with a different alignment. */
+  static AsciiBlock exesHComp6a =
+      new HComp(VAlignment.BOTTOM, new AsciiBlock[] { tmp1, tmp1, tmp1 });
+
+  /** Using an equivalent horizontal composition. */
+  static AsciiBlock exesHComp6b =
+      new HComp(VAlignment.BOTTOM, 
+          new AsciiBlock[] { 
+              newRect('X', 2, 4), newRect('X', 2, 4), newRect('X', 2, 4) });
+
+  // +-------+-------------------------------------------------------
   // | Empty |
   // +-------+
 
@@ -551,5 +687,315 @@ public class TestBlockEquiv {
             3, 2)),
         "E: Sample grid is not eqv to a 0-padded version of the same grid");
   } // testNotEqvGrid()
+
+  // +----------------------+----------------------------------------
+  // | The exes comparisons |
+  // +----------------------+
+
+  /**
+   * Rectangles vs rectangles that should be the same.
+   */
+  @Test
+  public void exesRectVsRectSame() {
+    assertTrue(AsciiBlock.equal(exesRect0a, exesRect0b),
+        "*: equal(exesRect0a, exesRect0b)");
+    assertTrue(AsciiBlock.equal(exesRect0b, exesRect0a),
+        "*: equal(exesRect0b, exesRect0a)");
+    assertTrue(AsciiBlock.eqv(exesRect0a, exesRect0b),
+        "*: eqv(exesRect0a, exesRect0b)");
+    assertTrue(AsciiBlock.eqv(exesRect0b, exesRect0a),
+        "*: eqv(exesRect1g, exesRect0a)");
+  } // exesRectVsRectSame
+
+  /**
+   * Rectangles vs grids.
+   */
+  @Test
+  public void exesRectVsGrid() {
+    assertTrue(AsciiBlock.equal(exesRect0a, exesGrid0a),
+        "*: equal(exesRect0a, exesGrid0a)");
+    assertTrue(AsciiBlock.equal(exesRect0a, exesGrid1a),
+        "*: equal(exesRect0a, exesGrid1a)");
+    assertTrue(AsciiBlock.equal(exesRect0a, exesGrid2a),
+        "*: equal(exesRect0a, exesGrid2a)");
+    assertTrue(AsciiBlock.equal(exesRect0a, exesGrid3a),
+        "*: equal(exesRect0a, exesGrid3a)");
+    assertFalse(AsciiBlock.eqv(exesRect0a, exesGrid0a),
+        "M: eqv(exesRect0a, exesGrid0a)");
+    assertFalse(AsciiBlock.eqv(exesRect0a, exesGrid1a),
+        "M: eqv(exesRect0a, exesGrid1a)");
+    assertFalse(AsciiBlock.eqv(exesRect0a, exesGrid2a),
+        "M: eqv(exesRect0a, exesGrid2a)");
+    assertFalse(AsciiBlock.eqv(exesRect0a, exesGrid3a),
+        "M: eqv(exesRect0a, exesGrid3a)");
+  } // exesRectVsGrid
+
+  /**
+   * Grids vs rectangles.
+   */
+  @Test
+  public void exesGridVsRect() {
+    assertTrue(AsciiBlock.equal(exesGrid0a, exesRect0a),
+        "*: equal(exesGrid0a, exesRect0a)");
+    assertTrue(AsciiBlock.equal(exesGrid1a, exesRect0a),
+        "*: equal(exesGrid1a, exesRect0a)");
+    assertTrue(AsciiBlock.equal(exesGrid2a, exesRect0a),
+        "*: equal(exesGrid2a, exesRect0a)");
+    assertTrue(AsciiBlock.equal(exesGrid3a, exesRect0a),
+        "*: equal(exesGrid3a, exesRect0a)");
+
+    assertFalse(AsciiBlock.eqv(exesGrid0a, exesRect0a),
+        "M: eqv(exesGrid0a, exesRect0a)");
+    assertFalse(AsciiBlock.eqv(exesGrid1a, exesRect0a),
+        "M: eqv(exesGrid1a, exesRect0a)");
+    assertFalse(AsciiBlock.eqv(exesGrid2a, exesRect0a),
+        "M: eqv(exesGrid2a, exesRect0a)");
+    assertFalse(AsciiBlock.eqv(exesGrid3a, exesRect0a),
+        "M: eqv(exesGrid3a, exesRect0a)");
+  } // exesGridVsRect()
+
+  /**
+   * Grids vs grids that are the same.
+   */
+  @Test
+  public void exesGridVsGridSame() {
+    assertTrue(AsciiBlock.equal(exesGrid0a, exesGrid0b),
+        "*: equal(exesGrid0a, exesGrid0b)");
+    assertTrue(AsciiBlock.equal(exesGrid0b, exesGrid0a),
+        "*: equal(exesGrid0b, exesGrid0a)");
+    assertTrue(AsciiBlock.equal(exesGrid1a, exesGrid1b),
+        "*: equal(exesGrid1a, exesGrid1b)");
+    assertTrue(AsciiBlock.equal(exesGrid1b, exesGrid1a),
+        "*: equal(exesGrid1b, exesGrid1a)");
+
+    assertTrue(AsciiBlock.eqv(exesGrid0a, exesGrid0b),
+        "M: eqv(exesGrid0a, exesGrid0b)");
+    assertTrue(AsciiBlock.eqv(exesGrid0b, exesGrid0a),
+        "M: eqv(exesGrid0b, exesGrid0a)");
+    assertTrue(AsciiBlock.eqv(exesGrid1a, exesGrid1b),
+        "M: eqv(exesGrid1a, exesGrid1b)");
+    assertTrue(AsciiBlock.eqv(exesGrid1b, exesGrid1a),
+        "M: eqv(exesGrid1b, exesGrid1a)");
+  } // exesGridVsGridSame()
+
+  /**
+   * Grids vs grids that are different.
+   */
+  public void exesGridVsGridDiff() {
+    assertTrue(AsciiBlock.equal(exesGrid0a, exesGrid1a),
+        "*: equal(exesGrid0a, exesGrid1a)");
+    assertTrue(AsciiBlock.equal(exesGrid1a, exesGrid0a),
+        "*: equal(exesGrid1a, exesGrid0a)");
+    assertTrue(AsciiBlock.equal(exesGrid0a, exesGrid2a),
+        "*: equal(exesGrid0a, exesGrid2a)");
+    assertTrue(AsciiBlock.equal(exesGrid2a, exesGrid0a),
+        "*: equal(exesGrid2a, exesGrid0a)");
+    assertTrue(AsciiBlock.equal(exesGrid1a, exesGrid2a),
+        "*: equal(exesGrid0a, exesGrid2a)");
+    assertTrue(AsciiBlock.equal(exesGrid2a, exesGrid1a),
+        "*: equal(exesGrid2a, exesGrid0a)");
+    assertTrue(AsciiBlock.equal(exesGrid0a, exesGrid3a),
+        "*: equal(exesGrid0a, exesGrid3a)");
+    assertTrue(AsciiBlock.equal(exesGrid3a, exesGrid0a),
+        "*: equal(exesGrid3a, exesGrid0a)");
+    assertTrue(AsciiBlock.equal(exesGrid1a, exesGrid3a),
+        "*: equal(exesGrid1a, exesGrid3a)");
+    assertTrue(AsciiBlock.equal(exesGrid3a, exesGrid1a),
+        "*: equal(exesGrid3a, exesGrid1a)");
+    assertTrue(AsciiBlock.equal(exesGrid2a, exesGrid3a),
+        "*: equal(exesGrid2a, exesGrid3a)");
+    assertTrue(AsciiBlock.equal(exesGrid3a, exesGrid2a),
+        "*: equal(exesGrid3a, exesGrid2a)");
+
+    assertFalse(AsciiBlock.eqv(exesGrid0a, exesGrid1a),
+        "M: eqv(exesGrid0a, exesGrid1a)");
+    assertFalse(AsciiBlock.eqv(exesGrid1a, exesGrid0a),
+        "M: eqv(exesGrid1a, exesGrid0a)");
+    assertFalse(AsciiBlock.eqv(exesGrid0a, exesGrid2a),
+        "M: eqv(exesGrid0a, exesGrid2a)");
+    assertFalse(AsciiBlock.eqv(exesGrid2a, exesGrid0a),
+        "M: eqv(exesGrid2a, exesGrid0a)");
+    assertFalse(AsciiBlock.eqv(exesGrid1a, exesGrid2a),
+        "M: eqv(exesGrid0a, exesGrid2a)");
+    assertFalse(AsciiBlock.eqv(exesGrid2a, exesGrid1a),
+        "M: eqv(exesGrid2a, exesGrid0a)");
+    assertFalse(AsciiBlock.eqv(exesGrid0a, exesGrid3a),
+        "M: eqv(exesGrid0a, exesGrid3a)");
+    assertFalse(AsciiBlock.eqv(exesGrid3a, exesGrid0a),
+        "M: eqv(exesGrid3a, exesGrid0a)");
+    assertFalse(AsciiBlock.eqv(exesGrid1a, exesGrid3a),
+        "M: eqv(exesGrid1a, exesGrid3a)");
+    assertFalse(AsciiBlock.eqv(exesGrid3a, exesGrid1a),
+        "M: eqv(exesGrid3a, exesGrid1a)");
+    assertFalse(AsciiBlock.eqv(exesGrid2a, exesGrid3a),
+        "M: eqv(exesGrid2a, exesGrid3a)");
+    assertFalse(AsciiBlock.eqv(exesGrid3a, exesGrid2a),
+        "M: eqv(exesGrid3a, exesGrid2a)");
+  } // exesGridvsGridDiff
+
+  /**
+   * Rectangles vs HComps.
+   */
+  @Test
+  public void exesRectVsHComp() {
+    assertTrue(AsciiBlock.equal(exesRect0a, exesHComp0a),
+        "*: equal(exesRect0a, exesHComp0a)");
+    assertTrue(AsciiBlock.equal(exesRect0a, exesHComp1a),
+        "*: equal(exesRect0a, exesHComp1a)");
+    assertTrue(AsciiBlock.equal(exesRect0a, exesHComp2a),
+        "*: equal(exesRect0a, exesHComp2a)");
+    assertTrue(AsciiBlock.equal(exesRect0a, exesHComp3a),
+        "*: equal(exesRect0a, exesHComp3a)");
+    assertTrue(AsciiBlock.equal(exesRect0a, exesHComp4a),
+        "*: equal(exesRect0a, exesHComp4a)");
+    assertTrue(AsciiBlock.equal(exesRect0a, exesHComp5a),
+        "*: equal(exesRect0a, exesHComp5a)");
+    assertTrue(AsciiBlock.equal(exesRect0a, exesHComp6a),
+        "*: equal(exesRect0a, exesHComp6a)");
+
+    assertFalse(AsciiBlock.eqv(exesRect0a, exesHComp0a),
+        "M: eqv(exesRect0a, exesHComp0a)");
+    assertFalse(AsciiBlock.eqv(exesRect0a, exesHComp1a),
+        "M: eqv(exesRect0a, exesHComp1a)");
+    assertFalse(AsciiBlock.eqv(exesRect0a, exesHComp2a),
+        "M: eqv(exesRect0a, exesHComp2a)");
+    assertFalse(AsciiBlock.eqv(exesRect0a, exesHComp3a),
+        "M: eqv(exesRect0a, exesHComp3a)");
+    assertFalse(AsciiBlock.eqv(exesRect0a, exesHComp4a),
+        "M: eqv(exesRect0a, exesHComp4a)");
+    assertFalse(AsciiBlock.eqv(exesRect0a, exesHComp5a),
+        "M: eqv(exesRect0a, exesHComp5a)");
+    assertFalse(AsciiBlock.eqv(exesRect0a, exesHComp6a),
+        "M: eqv(exesRect0a, exesHComp6a)");
+  } // exesRectVsHComp()
+
+  /**
+   * HComp vs Rect
+   */
+  @Test
+  public void exesHCompVsRect() {
+    assertTrue(AsciiBlock.equal(exesHComp0a, exesRect0a),
+        "M: equal(exesHComp0a, exesRect0a)");
+    assertTrue(AsciiBlock.equal(exesHComp1a, exesRect0a),
+        "M: equal(exesHComp1a, exesRect0a)");
+    assertTrue(AsciiBlock.equal(exesHComp2a, exesRect0a),
+        "M: equal(exesHComp2a, exesRect0a)");
+    assertTrue(AsciiBlock.equal(exesHComp3a, exesRect0a),
+        "M: equal(exesHComp3a, exesRect0a)");
+    assertTrue(AsciiBlock.equal(exesHComp4a, exesRect0a),
+        "M: equal(exesHComp4a, exesRect0a)");
+    assertTrue(AsciiBlock.equal(exesHComp5a, exesRect0a),
+        "M: equal(exesHComp5a, exesRect0a)");
+    assertTrue(AsciiBlock.equal(exesHComp6a, exesRect0a),
+        "M: equal(exesHComp6a, exesRect0a)");
+
+    assertFalse(AsciiBlock.eqv(exesHComp0a, exesRect0a),
+        "M: eqv(exesHComp0a, exesRect0a)");
+    assertFalse(AsciiBlock.eqv(exesHComp1a, exesRect0a),
+        "M: eqv(exesHComp1a, exesRect0a)");
+    assertFalse(AsciiBlock.eqv(exesHComp2a, exesRect0a),
+        "M: eqv(exesHComp2a, exesRect0a)");
+    assertFalse(AsciiBlock.eqv(exesHComp3a, exesRect0a),
+        "M: eqv(exesHComp3a, exesRect0a)");
+    assertFalse(AsciiBlock.eqv(exesHComp4a, exesRect0a),
+        "M: eqv(exesHComp4a, exesRect0a)");
+    assertFalse(AsciiBlock.eqv(exesHComp5a, exesRect0a),
+        "M: eqv(exesHComp5a, exesRect0a)");
+    assertFalse(AsciiBlock.eqv(exesHComp6a, exesRect0a),
+        "M: eqv(exesHComp6a, exesRect0a)");
+  } // exesHCompVsRect()
+
+  /**
+   * Grid vs HComp.
+   *
+   * The combinatorial explosion starts (unless you think it started
+   * already).
+   */
+  @Test
+  public void exesGridVsHComp() {
+    assertTrue(AsciiBlock.equal(exesGrid0a, exesHComp0a),
+        "*: equal(exesGrid0a, exesHComp0a)");
+    assertTrue(AsciiBlock.equal(exesGrid0a, exesHComp1a),
+        "*: equal(exesGrid0a, exesHComp1a)");
+    assertTrue(AsciiBlock.equal(exesGrid0a, exesHComp2a),
+        "*: equal(exesGrid0a, exesHComp2a)");
+    assertTrue(AsciiBlock.equal(exesGrid0a, exesHComp3a),
+        "*: equal(exesGrid0a, exesHComp3a)");
+    assertTrue(AsciiBlock.equal(exesGrid0a, exesHComp4a),
+        "*: equal(exesGrid0a, exesHComp4a)");
+    assertTrue(AsciiBlock.equal(exesGrid0a, exesHComp5a),
+        "*: equal(exesGrid0a, exesHComp5a)");
+    assertTrue(AsciiBlock.equal(exesGrid0a, exesHComp6a),
+        "*: equal(exesGrid0a, exesHComp6a)");
+
+    assertTrue(AsciiBlock.equal(exesGrid1a, exesHComp0a),
+        "*: equal(exesGrid1a, exesHComp0a)");
+    assertTrue(AsciiBlock.equal(exesGrid1a, exesHComp1a),
+        "*: equal(exesGrid1a, exesHComp1a)");
+    assertTrue(AsciiBlock.equal(exesGrid1a, exesHComp2a),
+        "*: equal(exesGrid1a, exesHComp2a)");
+    assertTrue(AsciiBlock.equal(exesGrid1a, exesHComp3a),
+        "*: equal(exesGrid1a, exesHComp3a)");
+    assertTrue(AsciiBlock.equal(exesGrid1a, exesHComp4a),
+        "*: equal(exesGrid1a, exesHComp4a)");
+    assertTrue(AsciiBlock.equal(exesGrid1a, exesHComp5a),
+        "*: equal(exesGrid1a, exesHComp5a)");
+    assertTrue(AsciiBlock.equal(exesGrid1a, exesHComp6a),
+        "*: equal(exesGrid1a, exesHComp6a)");
+
+    assertTrue(AsciiBlock.equal(exesGrid2a, exesHComp0a),
+        "*: equal(exesGrid2a, exesHComp0a)");
+    assertTrue(AsciiBlock.equal(exesGrid2a, exesHComp1a),
+        "*: equal(exesGrid2a, exesHComp1a)");
+    assertTrue(AsciiBlock.equal(exesGrid2a, exesHComp2a),
+        "*: equal(exesGrid2a, exesHComp2a)");
+    assertTrue(AsciiBlock.equal(exesGrid2a, exesHComp3a),
+        "*: equal(exesGrid2a, exesHComp3a)");
+    assertTrue(AsciiBlock.equal(exesGrid2a, exesHComp4a),
+        "*: equal(exesGrid2a, exesHComp4a)");
+    assertTrue(AsciiBlock.equal(exesGrid2a, exesHComp5a),
+        "*: equal(exesGrid2a, exesHComp5a)");
+    assertTrue(AsciiBlock.equal(exesGrid2a, exesHComp6a),
+        "*: equal(exesGrid2a, exesHComp6a)");
+
+    assertTrue(AsciiBlock.equal(exesGrid0a, exesHComp0a),
+        "*: equal(exesGrid0a, exesHComp0a)");
+    assertTrue(AsciiBlock.equal(exesGrid0a, exesHComp1a),
+        "*: equal(exesGrid0a, exesHComp1a)");
+    assertTrue(AsciiBlock.equal(exesGrid0a, exesHComp2a),
+        "*: equal(exesGrid0a, exesHComp2a)");
+    assertTrue(AsciiBlock.equal(exesGrid0a, exesHComp3a),
+        "*: equal(exesGrid0a, exesHComp3a)");
+    assertTrue(AsciiBlock.equal(exesGrid0a, exesHComp4a),
+        "*: equal(exesGrid0a, exesHComp4a)");
+    assertTrue(AsciiBlock.equal(exesGrid0a, exesHComp5a),
+        "*: equal(exesGrid0a, exesHComp5a)");
+    assertTrue(AsciiBlock.equal(exesGrid0a, exesHComp6a),
+        "*: equal(exesGrid0a, exesHComp6a)");
+
+  } // exesGridVsHComp()
+
+  /**
+   * HComp vs. Grid
+   */
+  @Test
+  public void exesHCompVsGrid() {
+  } // exesHCompVsGrid()
+
+  /**
+   * HComp vs HComp where they should be the same.
+   */
+  @Test
+  public void exesHCompVsHCompSame() {
+  } // exesHCompVsHCompSame()
+
+  /**
+   * HComp vs HComp where they should be different. 
+   *
+   * The combinatorial explosion increases.
+   */
+  @Test
+  public void exesHCompVsHCompDiff() {
+  } // exesHCompVsHCompDiff()
 
 } // class TestBlockEquiv
