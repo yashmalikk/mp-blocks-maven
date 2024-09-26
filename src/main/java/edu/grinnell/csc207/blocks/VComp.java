@@ -6,8 +6,8 @@ import java.util.Arrays;
  * The vertical composition of blocks.
  *
  * @author Samuel A. Rebelsky
- * @author Your Name Here
- * @author Your Name Here
+ * @author Yash Malik
+ * @author Richard Lin
  */
 public class VComp implements AsciiBlock {
   // +--------+------------------------------------------------------------
@@ -38,8 +38,7 @@ public class VComp implements AsciiBlock {
    * @param bottomBlock
    *   The block on the bottom.
    */
-  public VComp(HAlignment alignment, AsciiBlock topBlock,
-      AsciiBlock bottomBlock) {
+  public VComp(HAlignment alignment, AsciiBlock topBlock, AsciiBlock bottomBlock) {
     this.align = alignment;
     this.blocks = new AsciiBlock[] {topBlock, bottomBlock};
   } // VComp(HAlignment, AsciiBlock, AsciiBlock)
@@ -55,7 +54,7 @@ public class VComp implements AsciiBlock {
   public VComp(HAlignment alignment, AsciiBlock[] blocksToCompose) {
     this.align = alignment;
     this.blocks = Arrays.copyOf(blocksToCompose, blocksToCompose.length);
-  } // VComp(HAlignment, AsciiBLOCK[])
+  } // VComp(HAlignment, AsciiBlock[])
 
   // +---------+-----------------------------------------------------------
   // | Methods |
@@ -72,7 +71,30 @@ public class VComp implements AsciiBlock {
    *   if i is outside the range of valid rows.
    */
   public String row(int i) throws Exception {
-    return "";  // STUB
+    if (i < 0 || i >= height()) {
+      throw new Exception("Invalid row index: " + i);
+    }
+
+    int currentRow = i;
+    for (AsciiBlock block : blocks) {
+      int blockHeight = block.height();
+      if (currentRow < blockHeight) {
+        String contentRow = block.row(currentRow);
+        // Handle horizontal alignment
+        if (align == HAlignment.LEFT) {
+          return contentRow;
+        } else if (align == HAlignment.CENTER) {
+          int padding = (width() - contentRow.length()) / 2;
+          return " ".repeat(padding) + contentRow + " ".repeat(padding);
+        } else if (align == HAlignment.RIGHT) {
+          return " ".repeat(width() - contentRow.length()) + contentRow;
+        }
+      }
+      currentRow -= blockHeight;
+    }
+    
+    // Should not reach here, as row index should be valid
+    throw new Exception("Invalid row index: " + i);
   } // row(int)
 
   /**
@@ -81,7 +103,11 @@ public class VComp implements AsciiBlock {
    * @return the number of rows
    */
   public int height() {
-    return 0;   // STUB
+    int totalHeight = 0;
+    for (AsciiBlock block : blocks) {
+      totalHeight += block.height();
+    }
+    return totalHeight;
   } // height()
 
   /**
@@ -90,37 +116,33 @@ public class VComp implements AsciiBlock {
    * @return the number of columns
    */
   public int width() {
-    return 0;   // STUB
+    int maxWidth = 0;
+    for (AsciiBlock block : blocks) {
+      maxWidth = Math.max(maxWidth, block.width());
+    }
+    return maxWidth;
   } // width()
 
   // Checks if all blocks[] is equal to other blocks[] array with eqv as well.
-  public boolean checkEqvBlocksArr(VComp other){
-    boolean isGood = true;
-
-    if (other.blocks.length == this.blocks.length){
-      for(int i = 0; i < this.blocks.length; i++){
-        if (this.blocks[i].getClass() == other.blocks[i].getClass()){
-          isGood = isGood && (this.blocks[i].eqv(other.blocks[i]));
-        } else {
-          return false;
-        }
-      }
-    } else {
+  public boolean checkEqvBlocksArr(VComp other) {
+    if (other.blocks.length != this.blocks.length) {
       return false;
     }
 
-    return isGood;
+    for (int i = 0; i < this.blocks.length; i++) {
+      if (!this.blocks[i].eqv(other.blocks[i])) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   // created by Richard
   // Checks if aligns are the same.
-  public boolean checkEqvAlignment(VComp other){
-    if (this.align == other.align){
-      return true;
-    }
-    return false;
+  public boolean checkEqvAlignment(VComp other) {
+    return this.align == other.align;
   }
-
 
   /**
    * Determine if another block is structurally equivalent to this block.
@@ -134,10 +156,10 @@ public class VComp implements AsciiBlock {
    *    false otherwise.
    */
   public boolean eqv(AsciiBlock other) {
-    if (other instanceof VComp){
-      boolean alignCmp = (((VComp)other).align == this.align);
-      return alignCmp && checkEqvBlocksArr((VComp)other);
+    if (other instanceof VComp) {
+      boolean alignCmp = (((VComp) other).align == this.align);
+      return alignCmp && checkEqvBlocksArr((VComp) other);
     }
-    return false;       
+    return false;
   } // eqv(AsciiBlock)
 } // class VComp

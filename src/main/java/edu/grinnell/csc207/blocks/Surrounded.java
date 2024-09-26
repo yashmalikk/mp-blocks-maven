@@ -4,7 +4,8 @@ package edu.grinnell.csc207.blocks;
  * A text block surrounded by a single letter.
  *
  * @author Samuel A. Rebelsky
- * @author Your Name Here
+ * @author Yash Malik
+ * @author Richard Lin
  */
 public class Surrounded implements AsciiBlock {
   // +--------+------------------------------------------------------------
@@ -54,7 +55,18 @@ public class Surrounded implements AsciiBlock {
    *   If the row is invalid.
    */
   public String row(int i) throws Exception {
-    throw new Exception("Not yet implemented"); // STUB
+    if (i < 0 || i >= height()) {
+      throw new Exception("Invalid row index: " + i);
+    }
+
+    if (i == 0 || i == height() - 1) {
+      // Top or bottom border
+      return surroundChar.repeat(width());
+    } else {
+      // Contents row
+      String contentRow = contents.row(i - 1); // Adjust index for content rows
+      return surroundChar + contentRow + surroundChar;
+    }
   } // row(int)
 
   /**
@@ -63,7 +75,7 @@ public class Surrounded implements AsciiBlock {
    * @return the number of rows
    */
   public int height() {
-    return 0;   // STUB
+    return contents.height() + 2; // Adding top and bottom borders
   } // height()
 
   /**
@@ -72,7 +84,7 @@ public class Surrounded implements AsciiBlock {
    * @return the number of columns
    */
   public int width() {
-    return 0;   // STUB
+    return contents.width() + 2; // Adding borders on both sides
   } // width()
 
   /**
@@ -90,7 +102,6 @@ public class Surrounded implements AsciiBlock {
     if (other instanceof Surrounded){
       boolean strCmp = (((Surrounded)other).surroundChar.compareTo(this.surroundChar) == 0);
       boolean blockCmp = ((Surrounded)other).contents.eqv(this.contents);
-
       return strCmp && blockCmp;
     }
     return false;      
