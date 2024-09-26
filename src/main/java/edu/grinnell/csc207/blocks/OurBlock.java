@@ -1,7 +1,5 @@
 package edu.grinnell.csc207.blocks;
 
-import java.io.PrintWriter;
-
 /**
  * An AsciiBlock where every character in it is mutated
  * 
@@ -57,7 +55,6 @@ public class OurBlock implements AsciiBlock{
    *   If the row is invalid.
    */
   public String row(int i) throws Exception {
-    java.io.PrintWriter pen = new PrintWriter(System.out, true);
     if (i < 0 || i >= height()) {
       throw new Exception("Invalid row index: " + i);
     } // if
