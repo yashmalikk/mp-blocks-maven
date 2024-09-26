@@ -56,11 +56,15 @@ public class OurBlock implements AsciiBlock{
    *   If the row is invalid.
    */
   public String row(int i) throws Exception {
+    if (i < 0 || i >= height()) {
+      throw new Exception("Invalid row index: " + i);
+    } // if
+
     String newRow = "";
 
     // Look through each character and incrementing by incrementChar
     for (int k = 0; k < this.block.width(); k ++){
-      newRow.concat(String.valueOf((char)((int)block.row(i).charAt(k) + this.incrementChar)));
+      newRow = newRow.concat(String.valueOf((char)(block.row(i).charAt(k) + (char)this.incrementChar)));
     } // for
 
     return newRow;
