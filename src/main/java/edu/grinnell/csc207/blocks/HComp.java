@@ -1,14 +1,13 @@
 package edu.grinnell.csc207.blocks;
 
 import java.util.Arrays;
-import javax.swing.GroupLayout.Alignment;
-import java.io.PrintWriter;
 
 /**
  * The horizontal composition of blocks.
  *
  * @author Samuel A. Rebelsky
- * @author Your Name Here
+ * @author Yash Malik
+ * @author Richard Lin
  */
 public class HComp implements AsciiBlock {
   // +--------+------------------------------------------------------------
@@ -56,49 +55,37 @@ public class HComp implements AsciiBlock {
   public HComp(VAlignment alignment, AsciiBlock[] blocksToCompose) {
     this.align = alignment;
     this.blocks = Arrays.copyOf(blocksToCompose, blocksToCompose.length);
-  } // HComp(Alignment, AsciiBLOCK[])
+  } // HComp(VAlignment, AsciiBlock[])
 
   // +---------+-----------------------------------------------------------
   // | Methods |
   // +---------+
 
-  // Created by Richard
-  // helper to row
-  // Prints out what is the columns that the block is taking up (String to be concated)
-  public String check(AsciiBlock block, int row, int diff) throws Exception{
-    
-    // Checks if row is where this box actually has text.
-    if ((row >= diff) && (row <= diff + block.height())){
+  // Helper to get the row from the block
+  public String check(AsciiBlock block, int row, int diff) throws Exception {
+    if (row >= diff && row < diff + block.height()) {
       return block.row(row - diff);
-    }
-    else {
-      return (" ".repeat(block.width()));
+    } else {
+      return " ".repeat(block.width());
     }
   }
 
-  // Created by Richard
-  // helper to row / check 
-  // gives the difference in spacing from top to ascii block BASED ON ALIGNMENT
-  public int giveDiff(AsciiBlock block, int totalHeight){
-    int diff = 0;
-
-    if (this.align == VAlignment.TOP){
-      diff = 0;
-    } else if (this.align == VAlignment.CENTER){
-      diff = (totalHeight - block.height()) / 2; // truncates so that second part of spacing has one extra (WHICH IS WHAT REBELSKY WANTS)
-    } else { // this.align == VAlignment.BOTTOM
-      diff = (totalHeight - block.height());
+  // Helper to calculate the vertical difference based on alignment
+  public int giveDiff(AsciiBlock block, int totalHeight) {
+    switch (this.align) {
+      case TOP:
+        return 0;
+      case CENTER:
+        return (totalHeight - block.height()) / 2; // Truncates as needed
+      case BOTTOM:
+        return totalHeight - block.height();
+      default:
+        return 0; // Fallback (shouldn't happen)
     }
-
-    return diff;
   }
-
-
 
   /**
    * Get one row from the block.
-   * 
-   * !!! Implemented by Richard
    *
    * @param i the number of the row
    *
@@ -108,74 +95,68 @@ public class HComp implements AsciiBlock {
    *   if i is outside the range of valid rows.
    */
   public String row(int i) throws Exception {
-    String row = "";
-    int diff = 0;
-    for (int j = 0; j < this.blocks.length; j++){
-      row = row.concat(check(blocks[j], i, giveDiff(blocks[j], this.height())));
+    if (i < 0 || i >= height()) {
+      throw new Exception("Invalid row index: " + i);
     }
-    return row;
+
+    StringBuilder row = new StringBuilder();
+    int currentDiff = 0;
+
+    for (AsciiBlock block : blocks) {
+      currentDiff = giveDiff(block, height());
+      row.append(check(block, i, currentDiff));
+    }
+    
+    return row.toString();
   } // row(int)
 
   /**
    * Determine how many rows are in the block.
-   * 
-   * !!! Implemented by Richard
    *
    * @return the number of rows
    */
   public int height() {
-    int height = 0;
+    int maxHeight = 0;
 
-    for (int i = 0; i < this.blocks.length; i++){
-      height += this.blocks[i].height();
+    for (AsciiBlock block : blocks) {
+      maxHeight = Math.max(maxHeight, block.height());
     }
 
-    return height; 
+    return maxHeight;
   } // height()
 
   /**
    * Determine how many columns are in the block.
-   * 
-   * !!! Implemented by Richard
    *
    * @return the number of columns
    */
   public int width() {
-    int width = 0;
+    int totalWidth = 0;
 
-    for (int i = 0; i < this.blocks.length; i++){
-      width += this.blocks[i].width();
+    for (AsciiBlock block : blocks) {
+      totalWidth += block.width();
     }
 
-    return width();
+    return totalWidth;
   } // width()
 
-
-  // created by Richard
-  // Checks if all blocks[] is equal to other blocks[] array with eqv as well.
-  public boolean checkEqvBlocksArr(HComp other){
-    boolean isGood = true;
-
-    if (other.blocks.length == this.blocks.length){
-      for(int i = 0; i < this.blocks.length; i++){
-        if (this.blocks[i].getClass() == other.blocks[i].getClass()){
-          isGood = isGood && (this.blocks[i].eqv(other.blocks[i]));
-        } else {
-          return false;
-        }
-      }
-    } else {
+  // Checks if all blocks[] are equal to other blocks[] array with eqv as well.
+  public boolean checkEqvBlocksArr(HComp other) {
+    if (other.blocks.length != this.blocks.length) {
       return false;
     }
 
-    return isGood;
-  }
+    for (int i = 0; i < this.blocks.length; i++) {
+      if (!this.blocks[i].eqv(other.blocks[i])) {
+        return false;
+      }
+    }
 
+    return true;
+  }
 
   /**
    * Determine if another block is structurally equivalent to this block.
-   * 
-   * !!! implemented by Richard
    *
    * @param other
    *   The block to compare to this block.
@@ -184,11 +165,10 @@ public class HComp implements AsciiBlock {
    *    false otherwise.
    */
   public boolean eqv(AsciiBlock other) {
-    // if same type
-    if (other instanceof HComp){
-      boolean alignCmp = (((HComp)other).align == this.align);
-      return alignCmp && checkEqvBlocksArr((HComp)other);
+    if (other instanceof HComp) {
+      boolean alignCmp = (((HComp) other).align == this.align);
+      return alignCmp && checkEqvBlocksArr((HComp) other);
     }
-    return false;       
+    return false;
   } // eqv(AsciiBlock)
 } // class HComp

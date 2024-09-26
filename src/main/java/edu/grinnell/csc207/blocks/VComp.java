@@ -85,7 +85,7 @@ public class VComp implements AsciiBlock {
           return contentRow;
         } else if (align == HAlignment.CENTER) {
           int padding = (width() - contentRow.length()) / 2;
-          return " ".repeat(padding) + contentRow + " ".repeat(padding);
+          return " ".repeat(padding) + contentRow;
         } else if (align == HAlignment.RIGHT) {
           return " ".repeat(width() - contentRow.length()) + contentRow;
         }
@@ -138,7 +138,6 @@ public class VComp implements AsciiBlock {
     return true;
   }
 
-  // created by Richard
   // Checks if aligns are the same.
   public boolean checkEqvAlignment(VComp other) {
     return this.align == other.align;

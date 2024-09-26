@@ -4,7 +4,8 @@ package edu.grinnell.csc207.blocks;
  * A horizontally flipped ASCII block.
  *
  * @author Samuel A. Rebelsky
- * @author Your Name Here
+ * @author Yash Malik
+ * @author Richard Lin
  */
 public class HFlip implements AsciiBlock {
   // +--------+------------------------------------------------------------
@@ -25,8 +26,12 @@ public class HFlip implements AsciiBlock {
    *
    * @param original
    *   The original block.
+   * @throws IllegalArgumentException if original is null
    */
   public HFlip(AsciiBlock original) {
+    if (original == null) {
+      throw new IllegalArgumentException("Original block cannot be null");
+    }
     this.block = original;
   } // HFlip(AsciiBlock)
 
@@ -34,25 +39,21 @@ public class HFlip implements AsciiBlock {
   // | Methods |
   // +---------+
 
-  // Created by Richard
   // flips a string.
-  public String strFlip(String notFlipped){
+  public String strFlip(String notFlipped) {
     char[] flipped = new char[notFlipped.length()];
     char[] notflipped = notFlipped.toCharArray();
 
-    for (int i = 0; i < notflipped.length; i++){
+    for (int i = 0; i < notflipped.length; i++) {
       flipped[i] = notflipped[notflipped.length - 1 - i];
     }
 
-    return flipped.toString();
+    return new String(flipped); // Corrected
   }
-
 
   /**
    * Get one row from the block.
    * 
-   * !!! Implemented by Richard
-   *
    * @param i the number of the row
    *
    * @return row i.
@@ -67,8 +68,6 @@ public class HFlip implements AsciiBlock {
   /**
    * Determine how many rows are in the block.
    * 
-   * !!! Implemented by Richard
-   *
    * @return the number of rows
    */
   public int height() {
@@ -78,20 +77,15 @@ public class HFlip implements AsciiBlock {
   /**
    * Determine how many columns are in the block.
    * 
-   * !!! Implemented by Richard
-   *
    * @return the number of columns
    */
   public int width() {
     return this.block.width();  
   } // width()
 
-
   /**
    * Determine if another block is structurally equivalent to this block.
    * 
-   * !!! Implemented by Richard
-   *
    * @param other
    *   The block to compare to this block.
    *
@@ -99,8 +93,8 @@ public class HFlip implements AsciiBlock {
    *    false otherwise.
    */
   public boolean eqv(AsciiBlock other) {
-    if (other instanceof HFlip){
-      return this.block.eqv(((HFlip)other).block);
+    if (other instanceof HFlip) {
+      return this.block.eqv(((HFlip) other).block);
     }
     return false;       
   } // eqv(AsciiBlock)
