@@ -82,7 +82,7 @@ public class VComp implements AsciiBlock {
         String contentRow = block.row(currentRow);
         // Handle horizontal alignment
         if (align == HAlignment.LEFT) {
-          return contentRow;
+          return contentRow + " ".repeat(width() - contentRow.length());
         } else if (align == HAlignment.CENTER) {
           // Calculate padding for center alignment
           int padding = (width() - contentRow.length()) / 2;

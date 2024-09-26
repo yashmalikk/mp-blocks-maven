@@ -40,19 +40,12 @@ public class HFlip implements AsciiBlock {
   // +---------+
 
   // Flips a string.
-  public String strFlip(String notFlipped) {
-    char[] flipped = new char[notFlipped.length()];
-    char[] notflipped = notFlipped.toCharArray();
-
-    for (int i = 0; i < notflipped.length; i++) {
-      flipped[i] = notflipped[notflipped.length - 1 - i];
-    }
-
-    return new String(flipped);
+  private String strFlip(String notFlipped) {
+    return new StringBuilder(notFlipped).reverse().toString();
   }
 
   /**
-   * Get one row from the block.
+   * Get one row from the block with alignment.
    * 
    * @param i the number of the row
    *
@@ -62,7 +55,29 @@ public class HFlip implements AsciiBlock {
    *   If the row is invalid.
    */
   public String row(int i) throws Exception {
-    return block.row(i); // Return original row for now
+    String originalRow = block.row(i);
+    String flippedRow = strFlip(originalRow);
+    
+    // Adjusting width for alignment
+    int width = width();
+    int padding;
+
+    if (block instanceof VComp) {
+      VComp vComp = (VComp) block;
+      switch (vComp.align) {
+        case LEFT:
+          return flippedRow;
+        case CENTER:
+          padding = (width - flippedRow.length()) / 2;
+          return " ".repeat(padding) + flippedRow + " ".repeat(width - padding - flippedRow.length());
+        case RIGHT:
+          return " ".repeat(width - flippedRow.length()) + flippedRow;
+        default:
+          return flippedRow; // Default case
+      }
+    }
+
+    return flippedRow; // Default case for non-VComp blocks
   } // row(int)
 
   /**
@@ -98,27 +113,4 @@ public class HFlip implements AsciiBlock {
     }
     return false;       
   } // eqv(AsciiBlock)
-
-  /**
-   * Get one row from the block with alignment.
-   * 
-   * @param i the number of the row
-   * @param align the alignment to use
-   *
-   * @return row i with the specified alignment.
-   */
-  public String row(int i, HAlignment align) throws Exception {
-    String contentRow = block.row(i);
-    String flippedRow = strFlip(contentRow);
-
-    if (align == HAlignment.LEFT) {
-      return flippedRow;
-    } else if (align == HAlignment.CENTER) {
-      int padding = (width() - flippedRow.length()) / 2;
-      return " ".repeat(padding) + flippedRow;
-    } else if (align == HAlignment.RIGHT) {
-      return " ".repeat(width() - flippedRow.length()) + flippedRow;
-    }
-    return flippedRow; // Default to no alignment if unexpected value
-  }
 } // class HFlip
