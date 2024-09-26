@@ -9,8 +9,8 @@ import java.io.PrintWriter;
 /**
  * Create and print an amazing 80x24 ASCII artwork.
  *
- * @author Your Name Here
- * @author Your Name Here
+ * @author Yash Malik
+ * @author Richard Lin
  */
 public class Art80x24 {
   /**
@@ -24,8 +24,21 @@ public class Art80x24 {
    */
   public static void main(String[] args) throws Exception {
     PrintWriter pen = new PrintWriter(System.out, true);
+
+    // Create a rectangular block filled with '^'
     AsciiBlock art = new Rect('^', 80, 24);
+
+    // Optionally flip the artwork horizontally
+    AsciiBlock flippedArt = new HFlip(art);
+
+    // Print the original artwork
+    pen.println("Original Artwork:");
     AsciiBlock.print(pen, art);
+
+    // Print the flipped artwork
+    pen.println("\nFlipped Artwork:");
+    AsciiBlock.print(pen, flippedArt);
+
     pen.close();
   } // main(String[])
 } // class Art80x24
