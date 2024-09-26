@@ -61,16 +61,42 @@ public class HComp implements AsciiBlock {
   // | Methods |
   // +---------+
 
-  // Helper to get the row from the block
+
+  /**
+   * Returns a row.
+   * 
+   * @param block AsciiBlock
+   * 
+   * @param row the number of the row to be looked at
+   * 
+   * @param diff the spacing difference
+   * 
+   * @return Returns the row at int row
+   * 
+   * @throws Exception 
+   *  if row is out of bounds for the range of valid rows.
+   */
   public String check(AsciiBlock block, int row, int diff) throws Exception {
+    if (row < 0 || row >= height()) {
+      throw new Exception("Invalid row index: " + row);
+    } // if
     if (row >= diff && row < diff + block.height()) {
       return block.row(row - diff);
-    } else {
+    } // if
+    else {
       return " ".repeat(block.width());
-    }
-  }
+    } // if/else
+  } // check(AsciiBlock, int, int)
 
-  // Helper to calculate the vertical difference based on alignment
+  /**
+   * Gives the height difference between block and align based on this.align
+   * 
+   * @param block the Asciiblock
+   * 
+   * @param totalHeight Total height 'this'
+   * 
+   * @return An int representing the vertical height difference based on alignment
+   */
   public int giveDiff(AsciiBlock block, int totalHeight) {
     switch (this.align) {
       case TOP:
@@ -81,8 +107,8 @@ public class HComp implements AsciiBlock {
         return totalHeight - block.height();
       default:
         return 0; // Fallback (shouldn't happen)
-    }
-  }
+    } // switch
+  } // giveDiff(AsciiBlock, int)
 
   /**
    * Get one row from the block.
@@ -97,15 +123,15 @@ public class HComp implements AsciiBlock {
   public String row(int i) throws Exception {
     if (i < 0 || i >= height()) {
       throw new Exception("Invalid row index: " + i);
-    }
-
+    } // if
+ 
     StringBuilder row = new StringBuilder();
     int currentDiff = 0;
 
     for (AsciiBlock block : blocks) {
       currentDiff = giveDiff(block, height());
       row.append(check(block, i, currentDiff));
-    }
+    } // for
     
     return row.toString();
   } // row(int)
@@ -141,19 +167,27 @@ public class HComp implements AsciiBlock {
   } // width()
 
   // Checks if all blocks[] are equal to other blocks[] array with eqv as well.
+
+  /**
+   * A boolean value indicating whether or not other and this have the same blocks[].
+   * 
+   * @param other HComp to be compared to
+   * 
+   * @return boolean checking if blocks[] field contain the same block's.
+   */
   public boolean checkEqvBlocksArr(HComp other) {
     if (other.blocks.length != this.blocks.length) {
       return false;
-    }
+    } // if
 
     for (int i = 0; i < this.blocks.length; i++) {
       if (!this.blocks[i].eqv(other.blocks[i])) {
         return false;
-      }
-    }
+      } // if
+    } // for
 
     return true;
-  }
+  } // checkEqvBlocksArr(HComp)
 
   /**
    * Determine if another block is structurally equivalent to this block.
@@ -168,7 +202,7 @@ public class HComp implements AsciiBlock {
     if (other instanceof HComp) {
       boolean alignCmp = (((HComp) other).align == this.align);
       return alignCmp && checkEqvBlocksArr((HComp) other);
-    }
+    } // if
     return false;
   } // eqv(AsciiBlock)
 } // class HComp

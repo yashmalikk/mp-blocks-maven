@@ -140,15 +140,8 @@ public class VComp implements AsciiBlock {
     return true;
   }
 
-  // Checks if aligns are the same.
-  public boolean checkEqvAlignment(VComp other) {
-    return this.align == other.align;
-  }
-
   /**
    * Determine if another block is structurally equivalent to this block.
-   * 
-   * !!! implemented by Richard
    *
    * @param other
    *   The block to compare to this block.
@@ -160,7 +153,7 @@ public class VComp implements AsciiBlock {
     if (other instanceof VComp) {
       boolean alignCmp = (((VComp) other).align == this.align);
       return alignCmp && checkEqvBlocksArr((VComp) other);
-    }
-    return false;
+    } // if
+    return false; 
   } // eqv(AsciiBlock)
 } // class VComp

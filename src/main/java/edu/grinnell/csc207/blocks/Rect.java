@@ -4,6 +4,8 @@ package edu.grinnell.csc207.blocks;
  * A mutable rectangular block of one repeated character.
  *
  * @author Samuel A. Rebelsky
+ * @author Yash Malik
+ * @author Richard Lin
  */
 public class Rect implements AsciiBlock {
   // +--------+------------------------------------------------------------
@@ -91,8 +93,6 @@ public class Rect implements AsciiBlock {
 
   /**
    * Determine if another block is structurally equivalent to this block.
-   * 
-   * !!! implemented by richard
    *
    * @param other
    *   The block to compare to this block.
@@ -105,7 +105,7 @@ public class Rect implements AsciiBlock {
       boolean heightCmp = (((Rect)other).height == this.height);
       boolean strCmp = (((Rect)other).row.compareTo(this.row) == 0);
       return heightCmp && strCmp;
-    }
+    } // if
     return false;       
   } // eqv(AsciiBlock)
 

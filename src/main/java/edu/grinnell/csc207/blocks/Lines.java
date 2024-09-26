@@ -7,6 +7,8 @@ import java.util.Arrays;
  * testing.
  *
  * @author Samuel A. Rebelsky
+ * @author Yash Malik
+ * @author Richard Lin
  */
 public class Lines implements AsciiBlock {
   // +--------+------------------------------------------------------------
@@ -101,25 +103,29 @@ public class Lines implements AsciiBlock {
     return this.width;
   } // width()
 
-  // Created by Richard
+  /**
+   * Checks if 'this' and other have equal String Arrays in their fields.
+   * 
+   * @param other A Lines object to be compared to.
+   * 
+   * @return A boolean
+   */
   public boolean checkEqvStringArr(Lines other){
     boolean isTrue = true;
 
     if (other.lines.length == this.lines.length){
       for (int i = 0; i < other.lines.length; i++){
         isTrue = isTrue && (this.lines[i].compareTo(other.lines[i]) == 0);
-      }
-    } else {
+      } // for
+    } // if
+    else {
       return false;
-    }
-
+    } // if/else
     return isTrue; 
-  }
+  } // checkEqvStringArr(Lines)
 
   /**
    * Determine if another block is structurally equivalent to this block.
-   * 
-   * !!! implemented by Richard.
    *
    * @param other
    *   The block to compare to this block.
@@ -131,7 +137,7 @@ public class Lines implements AsciiBlock {
     if (other instanceof Lines){
       boolean widthCmp = (((Lines)other).width == this.width);
       return checkEqvStringArr((Lines)other) && widthCmp;
-    }
+    } // if
 
     return false;      
   } // eqv(AsciiBlock)

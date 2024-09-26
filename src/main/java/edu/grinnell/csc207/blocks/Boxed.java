@@ -95,8 +95,6 @@ public class Boxed implements AsciiBlock {
 
   /**
    * Determine if another block is structurally equivalent to this block.
-   * 
-   * !!! implemented by Richard
    *
    * @param other
    *   The block to compare to this block.

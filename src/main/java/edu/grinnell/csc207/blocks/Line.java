@@ -4,6 +4,8 @@ package edu.grinnell.csc207.blocks;
  * One line of text. The line is mutable (that is, it can be changed).
  *
  * @author Samuel A. Rebelsky
+ * @author Yash Malik
+ * @author Richard Lin
  */
 public class Line implements AsciiBlock {
   // +--------+------------------------------------------------------------
@@ -70,8 +72,6 @@ public class Line implements AsciiBlock {
 
   /**
    * Determine if another block is structurally equivalent to this block.
-   * 
-   * !!! implemented by Richard
    *
    * @param other
    *   The block to compare to this block.
@@ -81,9 +81,8 @@ public class Line implements AsciiBlock {
    */
   public boolean eqv(AsciiBlock other){
     if (other instanceof Line){
-      
       return (((Line)other).line.compareTo(this.line) == 0);
-    }
+    } // if
     return false;       
   } // eqv(AsciiBlock)
 

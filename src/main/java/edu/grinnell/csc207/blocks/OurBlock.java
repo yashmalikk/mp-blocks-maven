@@ -58,9 +58,10 @@ public class OurBlock implements AsciiBlock{
   public String row(int i) throws Exception {
     String newRow = "";
 
+    // Look through each character and incrementing by incrementChar
     for (int k = 0; k < this.block.width(); k ++){
       newRow.concat(String.valueOf((char)((int)block.row(i).charAt(k) + this.incrementChar)));
-    }
+    } // for
 
     return newRow;
   } // row(int)
@@ -95,7 +96,7 @@ public class OurBlock implements AsciiBlock{
   public boolean eqv(AsciiBlock other) {
     if (other instanceof OurBlock) {
       return this.block.eqv(((OurBlock) other).block) && (((OurBlock)other).incrementChar == this.incrementChar);
-    }
+    } // if
     return false;       
   } // eqv(AsciiBlock)
 } // class OurBlock

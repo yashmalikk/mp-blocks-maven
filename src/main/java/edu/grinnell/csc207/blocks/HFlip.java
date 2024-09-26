@@ -40,9 +40,17 @@ public class HFlip implements AsciiBlock {
   // +---------+
 
   // Flips a string.
+
+  /**
+   * Flips the characters of a string notFlipped and returns that string.
+   * 
+   * @param notFlipped A string to be flipped
+   * 
+   * @return A string with the characters of notFlipped flipped.
+   */
   private String strFlip(String notFlipped) {
     return new StringBuilder(notFlipped).reverse().toString();
-  }
+  } // strFlip(String)
 
   /**
    * Get one row from the block with alignment.
@@ -74,8 +82,8 @@ public class HFlip implements AsciiBlock {
           return " ".repeat(width - flippedRow.length()) + flippedRow;
         default:
           return flippedRow; // Default case
-      }
-    }
+      } // switch
+    } // if
 
     return flippedRow; // Default case for non-VComp blocks
   } // row(int)
@@ -110,7 +118,7 @@ public class HFlip implements AsciiBlock {
   public boolean eqv(AsciiBlock other) {
     if (other instanceof HFlip) {
       return this.block.eqv(((HFlip) other).block);
-    }
+    } // if
     return false;       
   } // eqv(AsciiBlock)
 } // class HFlip

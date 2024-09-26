@@ -57,7 +57,7 @@ public class Surrounded implements AsciiBlock {
   public String row(int i) throws Exception {
     if (i < 0 || i >= height()) {
       throw new Exception("Invalid row index: " + i);
-    }
+    } // if
 
     if (i == 0 || i == height() - 1) {
       // Top or bottom border
@@ -66,7 +66,7 @@ public class Surrounded implements AsciiBlock {
       // Contents row
       String contentRow = contents.row(i - 1); // Adjust index for content rows
       return surroundChar + contentRow + surroundChar;
-    }
+    } // if/else
   } // row(int)
 
   /**
@@ -89,8 +89,6 @@ public class Surrounded implements AsciiBlock {
 
   /**
    * Determine if another block is structurally equivalent to this block.
-   * 
-   * !!! implemented by Richard
    *
    * @param other
    *   The block to compare to this block.
@@ -103,7 +101,7 @@ public class Surrounded implements AsciiBlock {
       boolean strCmp = (((Surrounded)other).surroundChar.compareTo(this.surroundChar) == 0);
       boolean blockCmp = ((Surrounded)other).contents.eqv(this.contents);
       return strCmp && blockCmp;
-    }
+    } // if
     return false;      
   } // eqv(AsciiBlock)
 } // class Surrounded

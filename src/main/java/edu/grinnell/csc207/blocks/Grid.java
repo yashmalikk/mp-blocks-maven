@@ -72,8 +72,6 @@ public class Grid implements AsciiBlock {
 
   /**
    * Determine how many rows are in the block.
-   * 
-   * !!! Implemented by Richard
    *
    * @return the number of rows
    */
