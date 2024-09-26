@@ -86,8 +86,11 @@ public class HFlip implements AsciiBlock {
     return this.block.width();  
   } // width()
 
+
   /**
    * Determine if another block is structurally equivalent to this block.
+   * 
+   * !!! Implemented by Richard
    *
    * @param other
    *   The block to compare to this block.
@@ -96,6 +99,9 @@ public class HFlip implements AsciiBlock {
    *    false otherwise.
    */
   public boolean eqv(AsciiBlock other) {
-    return false;       // STUB
+    if (other instanceof HFlip){
+      return this.block.eqv(((HFlip)other).block);
+    }
+    return false;       
   } // eqv(AsciiBlock)
 } // class HFlip

@@ -101,8 +101,25 @@ public class Lines implements AsciiBlock {
     return this.width;
   } // width()
 
+  // Created by Richard
+  public boolean checkEqvStringArr(Lines other){
+    boolean isTrue = true;
+
+    if (other.lines.length == this.lines.length){
+      for (int i = 0; i < other.lines.length; i++){
+        isTrue = isTrue && (this.lines[i].compareTo(other.lines[i]) == 0);
+      }
+    } else {
+      return false;
+    }
+
+    return isTrue; 
+  }
+
   /**
    * Determine if another block is structurally equivalent to this block.
+   * 
+   * !!! implemented by Richard.
    *
    * @param other
    *   The block to compare to this block.
@@ -111,6 +128,11 @@ public class Lines implements AsciiBlock {
    *    false otherwise.
    */
   public boolean eqv(AsciiBlock other) {
-    return false;       // STUB
+    if (other instanceof Lines){
+      boolean widthCmp = (((Lines)other).width == this.width);
+      return checkEqvStringArr((Lines)other) && widthCmp;
+    }
+
+    return false;      
   } // eqv(AsciiBlock)
 } // class Lines

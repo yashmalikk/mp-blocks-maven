@@ -77,6 +77,8 @@ public class Surrounded implements AsciiBlock {
 
   /**
    * Determine if another block is structurally equivalent to this block.
+   * 
+   * !!! implemented by Richard
    *
    * @param other
    *   The block to compare to this block.
@@ -85,6 +87,12 @@ public class Surrounded implements AsciiBlock {
    *    false otherwise.
    */
   public boolean eqv(AsciiBlock other) {
-    return false;       // STUB
+    if (other instanceof Surrounded){
+      boolean strCmp = (((Surrounded)other).surroundChar.compareTo(this.surroundChar) == 0);
+      boolean blockCmp = ((Surrounded)other).contents.eqv(this.contents);
+
+      return strCmp && blockCmp;
+    }
+    return false;      
   } // eqv(AsciiBlock)
 } // class Surrounded

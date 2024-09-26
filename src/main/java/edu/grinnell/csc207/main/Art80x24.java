@@ -1,6 +1,7 @@
 package edu.grinnell.csc207.main;
 
 import edu.grinnell.csc207.blocks.AsciiBlock;
+import edu.grinnell.csc207.blocks.HFlip;
 import edu.grinnell.csc207.blocks.Rect;
 
 import java.io.PrintWriter;

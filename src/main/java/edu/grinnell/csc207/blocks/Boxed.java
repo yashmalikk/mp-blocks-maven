@@ -93,6 +93,8 @@ public class Boxed implements AsciiBlock {
 
   /**
    * Determine if another block is structurally equivalent to this block.
+   * 
+   * !!! implemented by Richard
    *
    * @param other
    *   The block to compare to this block.
@@ -101,7 +103,10 @@ public class Boxed implements AsciiBlock {
    *    false otherwise.
    */
   public boolean eqv(AsciiBlock other) {
-    return false;       // STUB
+    if (other instanceof Boxed){
+      return (((Boxed)other).contents.eqv(this.contents));
+    }
+    return false;      
   } // eqv(AsciiBlock)
 
   /**

@@ -1,6 +1,7 @@
 package edu.grinnell.csc207.blocks;
 
 import java.util.Arrays;
+import javax.swing.GroupLayout.Alignment;
 import java.io.PrintWriter;
 
 /**
@@ -96,6 +97,8 @@ public class HComp implements AsciiBlock {
 
   /**
    * Get one row from the block.
+   * 
+   * !!! Implemented by Richard
    *
    * @param i the number of the row
    *
@@ -116,7 +119,7 @@ public class HComp implements AsciiBlock {
   /**
    * Determine how many rows are in the block.
    * 
-   * !!! Modified by Richard
+   * !!! Implemented by Richard
    *
    * @return the number of rows
    */
@@ -133,7 +136,7 @@ public class HComp implements AsciiBlock {
   /**
    * Determine how many columns are in the block.
    * 
-   * !!! Modified by Richard
+   * !!! Implemented by Richard
    *
    * @return the number of columns
    */
@@ -147,8 +150,32 @@ public class HComp implements AsciiBlock {
     return width();
   } // width()
 
+
+  // created by Richard
+  // Checks if all blocks[] is equal to other blocks[] array with eqv as well.
+  public boolean checkEqvBlocksArr(HComp other){
+    boolean isGood = true;
+
+    if (other.blocks.length == this.blocks.length){
+      for(int i = 0; i < this.blocks.length; i++){
+        if (this.blocks[i].getClass() == other.blocks[i].getClass()){
+          isGood = isGood && (this.blocks[i].eqv(other.blocks[i]));
+        } else {
+          return false;
+        }
+      }
+    } else {
+      return false;
+    }
+
+    return isGood;
+  }
+
+
   /**
    * Determine if another block is structurally equivalent to this block.
+   * 
+   * !!! implemented by Richard
    *
    * @param other
    *   The block to compare to this block.
@@ -157,7 +184,11 @@ public class HComp implements AsciiBlock {
    *    false otherwise.
    */
   public boolean eqv(AsciiBlock other) {
-
-    return false;       // STUB
+    // if same type
+    if (other instanceof HComp){
+      boolean alignCmp = (((HComp)other).align == this.align);
+      return alignCmp && checkEqvBlocksArr((HComp)other);
+    }
+    return false;       
   } // eqv(AsciiBlock)
 } // class HComp

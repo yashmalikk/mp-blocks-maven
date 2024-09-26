@@ -70,6 +70,8 @@ public class Line implements AsciiBlock {
 
   /**
    * Determine if another block is structurally equivalent to this block.
+   * 
+   * !!! implemented by Richard
    *
    * @param other
    *   The block to compare to this block.
@@ -77,8 +79,12 @@ public class Line implements AsciiBlock {
    * @return true if the two blocks are structurally equivalent and
    *    false otherwise.
    */
-  public boolean eqv(AsciiBlock other) {
-    return false;       // STUB
+  public boolean eqv(AsciiBlock other){
+    if (other instanceof Line){
+      
+      return (((Line)other).line.compareTo(this.line) == 0);
+    }
+    return false;       
   } // eqv(AsciiBlock)
 
   // +---------------+-----------------------------------------------

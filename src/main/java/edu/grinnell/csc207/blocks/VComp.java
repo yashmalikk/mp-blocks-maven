@@ -93,8 +93,39 @@ public class VComp implements AsciiBlock {
     return 0;   // STUB
   } // width()
 
+  // Checks if all blocks[] is equal to other blocks[] array with eqv as well.
+  public boolean checkEqvBlocksArr(VComp other){
+    boolean isGood = true;
+
+    if (other.blocks.length == this.blocks.length){
+      for(int i = 0; i < this.blocks.length; i++){
+        if (this.blocks[i].getClass() == other.blocks[i].getClass()){
+          isGood = isGood && (this.blocks[i].eqv(other.blocks[i]));
+        } else {
+          return false;
+        }
+      }
+    } else {
+      return false;
+    }
+
+    return isGood;
+  }
+
+  // created by Richard
+  // Checks if aligns are the same.
+  public boolean checkEqvAlignment(VComp other){
+    if (this.align == other.align){
+      return true;
+    }
+    return false;
+  }
+
+
   /**
    * Determine if another block is structurally equivalent to this block.
+   * 
+   * !!! implemented by Richard
    *
    * @param other
    *   The block to compare to this block.
@@ -103,6 +134,10 @@ public class VComp implements AsciiBlock {
    *    false otherwise.
    */
   public boolean eqv(AsciiBlock other) {
-    return false;       // STUB
+    if (other instanceof VComp){
+      boolean alignCmp = (((VComp)other).align == this.align);
+      return alignCmp && checkEqvBlocksArr((VComp)other);
+    }
+    return false;       
   } // eqv(AsciiBlock)
 } // class VComp
