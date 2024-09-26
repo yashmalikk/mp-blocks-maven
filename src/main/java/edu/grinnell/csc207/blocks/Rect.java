@@ -88,8 +88,11 @@ public class Rect implements AsciiBlock {
     return this.row.length();
   } // width()
 
+
   /**
    * Determine if another block is structurally equivalent to this block.
+   * 
+   * !!! implemented by richard
    *
    * @param other
    *   The block to compare to this block.
@@ -98,7 +101,12 @@ public class Rect implements AsciiBlock {
    *    false otherwise.
    */
   public boolean eqv(AsciiBlock other) {
-    return false;       // STUB
+    if (other instanceof Rect){
+      boolean heightCmp = (((Rect)other).height == this.height);
+      boolean strCmp = (((Rect)other).row.compareTo(this.row) == 0);
+      return heightCmp && strCmp;
+    }
+    return false;       
   } // eqv(AsciiBlock)
 
   // +---------------+-----------------------------------------------

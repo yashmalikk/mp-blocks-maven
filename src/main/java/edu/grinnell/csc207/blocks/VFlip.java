@@ -68,6 +68,8 @@ public class VFlip implements AsciiBlock {
 
   /**
    * Determine if another block is structurally equivalent to this block.
+   * 
+   * !!! implemented by Richard
    *
    * @param other
    *   The block to compare to this block.
@@ -76,6 +78,9 @@ public class VFlip implements AsciiBlock {
    *    false otherwise.
    */
   public boolean eqv(AsciiBlock other) {
-    return false;       // STUB
+    if (other instanceof VFlip){
+      return this.block.eqv(((VFlip)other).block);
+    }
+    return false;       
   } // eqv(AsciiBlock)
 } // class VFlip
