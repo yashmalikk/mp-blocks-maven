@@ -39,7 +39,7 @@ public class HFlip implements AsciiBlock {
   // | Methods |
   // +---------+
 
-  // flips a string.
+  // Flips a string.
   public String strFlip(String notFlipped) {
     char[] flipped = new char[notFlipped.length()];
     char[] notflipped = notFlipped.toCharArray();
@@ -48,7 +48,7 @@ public class HFlip implements AsciiBlock {
       flipped[i] = notflipped[notflipped.length - 1 - i];
     }
 
-    return new String(flipped); // Corrected
+    return new String(flipped);
   }
 
   /**
@@ -62,7 +62,7 @@ public class HFlip implements AsciiBlock {
    *   If the row is invalid.
    */
   public String row(int i) throws Exception {
-    return strFlip(block.row(i));
+    return block.row(i); // Return original row for now
   } // row(int)
 
   /**
@@ -80,7 +80,7 @@ public class HFlip implements AsciiBlock {
    * @return the number of columns
    */
   public int width() {
-    return this.block.width();  
+    return this.block.width();
   } // width()
 
   /**
@@ -98,4 +98,27 @@ public class HFlip implements AsciiBlock {
     }
     return false;       
   } // eqv(AsciiBlock)
+
+  /**
+   * Get one row from the block with alignment.
+   * 
+   * @param i the number of the row
+   * @param align the alignment to use
+   *
+   * @return row i with the specified alignment.
+   */
+  public String row(int i, HAlignment align) throws Exception {
+    String contentRow = block.row(i);
+    String flippedRow = strFlip(contentRow);
+
+    if (align == HAlignment.LEFT) {
+      return flippedRow;
+    } else if (align == HAlignment.CENTER) {
+      int padding = (width() - flippedRow.length()) / 2;
+      return " ".repeat(padding) + flippedRow;
+    } else if (align == HAlignment.RIGHT) {
+      return " ".repeat(width() - flippedRow.length()) + flippedRow;
+    }
+    return flippedRow; // Default to no alignment if unexpected value
+  }
 } // class HFlip

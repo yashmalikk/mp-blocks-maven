@@ -84,9 +84,11 @@ public class VComp implements AsciiBlock {
         if (align == HAlignment.LEFT) {
           return contentRow;
         } else if (align == HAlignment.CENTER) {
+          // Calculate padding for center alignment
           int padding = (width() - contentRow.length()) / 2;
-          return " ".repeat(padding) + contentRow;
+          return " ".repeat(padding) + contentRow + " ".repeat(width() - padding - contentRow.length());
         } else if (align == HAlignment.RIGHT) {
+          // Calculate padding for right alignment
           return " ".repeat(width() - contentRow.length()) + contentRow;
         }
       }
