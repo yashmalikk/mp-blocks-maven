@@ -97,11 +97,11 @@ public class Surrounded implements AsciiBlock {
    *    false otherwise.
    */
   public boolean eqv(AsciiBlock other) {
-    if (other instanceof Surrounded){
-      boolean strCmp = (((Surrounded)other).surroundChar.compareTo(this.surroundChar) == 0);
-      boolean blockCmp = ((Surrounded)other).contents.eqv(this.contents);
+    if (other instanceof Surrounded) {
+      boolean strCmp = (((Surrounded) other).surroundChar.compareTo(this.surroundChar) == 0);
+      boolean blockCmp = ((Surrounded) other).contents.eqv(this.contents);
       return strCmp && blockCmp;
     } // if
-    return false;      
+    return false;
   } // eqv(AsciiBlock)
 } // class Surrounded

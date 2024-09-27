@@ -48,8 +48,8 @@ public class VFlip implements AsciiBlock {
   public String row(int i) throws Exception {
     if (i < 0 || i >= height()) {
       throw new Exception("Invalid row index: " + i);
-    }
-    
+    } // if
+
     // Flipping the row index
     return block.row(height() - 1 - i);
   } // row(int)
@@ -85,6 +85,6 @@ public class VFlip implements AsciiBlock {
     if (other instanceof VFlip) {
       return this.block.eqv(((VFlip) other).block);
     } // if
-    return false;       
+    return false;
   } // eqv(AsciiBlock)
 } // class VFlip

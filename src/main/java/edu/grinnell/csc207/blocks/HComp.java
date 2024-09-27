@@ -64,17 +64,16 @@ public class HComp implements AsciiBlock {
 
   /**
    * Returns a row.
-   * 
+   *
    * @param block AsciiBlock
-   * 
-   * @param row the number of the row to be looked at
-   * 
+   *
+   * @param row the number of the row to be looked at.
+   *
    * @param diff the spacing difference
-   * 
+   *
    * @return Returns the row at int row
-   * 
-   * @throws Exception 
-   *  if row is out of bounds for the range of valid rows.
+   *
+   * @throws Exception if row is out of bounds for the range of valid rows.
    */
   public String check(AsciiBlock block, int row, int diff) throws Exception {
     if (row < 0 || row >= height()) {
@@ -82,20 +81,19 @@ public class HComp implements AsciiBlock {
     } // if
     if (row >= diff && row < diff + block.height()) {
       return block.row(row - diff);
-    } // if
-    else {
+    } else {
       return " ".repeat(block.width());
     } // if/else
   } // check(AsciiBlock, int, int)
 
   /**
-   * Gives the height difference between block and align based on this.align
-   * 
+   * Gives the height difference between block and align based on this.align.
+   *
    * @param block the Asciiblock
-   * 
-   * @param totalHeight Total height 'this'
-   * 
-   * @return An int representing the vertical height difference based on alignment
+   *
+   * @param totalHeight Total height 'this'.
+   *
+   * @return An int representing the vertical height difference based on alignment.
    */
   public int giveDiff(AsciiBlock block, int totalHeight) {
     switch (this.align) {
@@ -124,7 +122,7 @@ public class HComp implements AsciiBlock {
     if (i < 0 || i >= height()) {
       throw new Exception("Invalid row index: " + i);
     } // if
- 
+
     StringBuilder row = new StringBuilder();
     int currentDiff = 0;
 
@@ -132,13 +130,12 @@ public class HComp implements AsciiBlock {
       currentDiff = giveDiff(block, height());
       row.append(check(block, i, currentDiff));
     } // for
-    
+
     return row.toString();
   } // row(int)
 
   /**
    * Determine how many rows are in the block.
-   *
    * @return the number of rows
    */
   public int height() {
@@ -146,7 +143,7 @@ public class HComp implements AsciiBlock {
 
     for (AsciiBlock block : blocks) {
       maxHeight = Math.max(maxHeight, block.height());
-    }
+    } // for
 
     return maxHeight;
   } // height()
@@ -161,7 +158,7 @@ public class HComp implements AsciiBlock {
 
     for (AsciiBlock block : blocks) {
       totalWidth += block.width();
-    }
+    } // for
 
     return totalWidth;
   } // width()
@@ -170,9 +167,9 @@ public class HComp implements AsciiBlock {
 
   /**
    * A boolean value indicating whether or not other and this have the same blocks[].
-   * 
+   *
    * @param other HComp to be compared to
-   * 
+   *
    * @return boolean checking if blocks[] field contain the same block's.
    */
   public boolean checkEqvBlocksArr(HComp other) {

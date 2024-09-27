@@ -3,8 +3,6 @@ package edu.grinnell.csc207.main;
 import edu.grinnell.csc207.blocks.AsciiBlock;
 import edu.grinnell.csc207.blocks.HAlignment;
 import edu.grinnell.csc207.blocks.HComp;
-import edu.grinnell.csc207.blocks.HFlip;
-import edu.grinnell.csc207.blocks.Rect;
 import edu.grinnell.csc207.blocks.Surrounded;
 import edu.grinnell.csc207.blocks.VAlignment;
 import edu.grinnell.csc207.blocks.VComp;
@@ -28,11 +26,9 @@ public class Art80x24 {
    */
   public static void main(String[] args) throws Exception {
     PrintWriter pen = new PrintWriter(System.out, true);
-
-    
     String outer = new String("  mmmm  ");
     String outerMid = new String(" m    m ");
-    String mid = new String("m      m");  
+    String mid = new String("m      m");
 
     // Create mini image to be used
     String[] miniArt = {outer, outerMid, mid, mid, outerMid, outer};
@@ -50,13 +46,13 @@ public class Art80x24 {
     AsciiBlock art6 = new OurBlock(art5, 1);
 
     // Mutate and Create full row of art
-    AsciiBlock[] Hcomp1 = {art3, art4, art5, art6};
-    AsciiBlock Hcomp1Group = new HComp(VAlignment.CENTER, Hcomp1);
-    AsciiBlock Hcomp2Group = new OurBlock(Hcomp1Group, 1);
+    AsciiBlock[] hComp1 = {art3, art4, art5, art6};
+    AsciiBlock hComp1Group = new HComp(VAlignment.CENTER, hComp1);
+    AsciiBlock hComp2Group = new OurBlock(hComp1Group, 1);
 
-    AsciiBlock[] HcompBig = {Hcomp1Group, Hcomp2Group};
+    AsciiBlock[] hCompBig = {hComp1Group, hComp2Group};
 
-    AsciiBlock row1 = new HComp(VAlignment.BOTTOM, HcompBig);
+    AsciiBlock row1 = new HComp(VAlignment.BOTTOM, hCompBig);
 
     // Mutate and Stack rows together
     AsciiBlock row2 = new OurBlock(row1, 494);
@@ -65,12 +61,11 @@ public class Art80x24 {
     AsciiBlock[] totalArt = {row1, row2, row3};
 
     AsciiBlock bigArt = new VComp(HAlignment.LEFT, totalArt);
-
     AsciiBlock.print(pen, bigArt);
 
-    
     // This is the image printed since it takes too long to print sometimes.
-    // Looks better printed since the overflow of characters on the edge is managed by the terminals spacing of characters.
+    // Looks better printed since the overflow of characters on the edge is
+    // managed by the terminals spacing of characters.
 
     // bbbbbbbbbbccccccccccddddddddddeeeeeeeeeeccccccccccddddddddddeeeeeeeeeeffffffffff
     // bƧƧǴǴǴǴƧƧbcƨƨǵǵǵǵƨƨcdƩƩǶǶǶǶƩƩdeƪƪǷǷǷǷƪƪecƨƨǵǵǵǵƨƨcdƩƩǶǶǶǶƩƩdeƪƪǷǷǷǷƪƪefƫƫǸǸǸǸƫƫf

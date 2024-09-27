@@ -54,8 +54,6 @@ public class Grid implements AsciiBlock {
 
   /**
    * Get one row from the block.
-   * 
-   * !!! Implemented by Richard
    *
    * @param i the number of the row
    *
@@ -64,7 +62,7 @@ public class Grid implements AsciiBlock {
    * @exception Exception
    *   If the row is invalid.
    */
-  public String row(int i) throws Exception { 
+  public String row(int i) throws Exception {
     int iRowInBlock = i % this.element.height();
 
     return this.element.row(iRowInBlock).repeat(this.hreps);
@@ -81,9 +79,6 @@ public class Grid implements AsciiBlock {
 
   /**
    * Determine how many columns are in the block.
-   * 
-   * !!! Implemented by Richard
-   *
    * @return the number of columns
    */
   public int width() {
@@ -95,7 +90,6 @@ public class Grid implements AsciiBlock {
    *
    * @param other
    *   The block to compare to this block.
-   *
    * @return true if the two blocks are structurally equivalent and
    *    false otherwise.
    */
@@ -105,12 +99,8 @@ public class Grid implements AsciiBlock {
 
   /**
    * Determine if another grid is structurally equivalent to this grid.
-   *
-   * @param other
-   *   The grid to compare to this grid.
-   *
-   * @return true if the two blocks are structurally equivalent and
-   *    false otherwise.
+   * @param other The grid to compare to 'this'.
+   * @return true if the two blocks are structurally equivalent and false otherwise.
    */
   public boolean eqv(Grid other) {
     return (this.hreps == other.hreps) && (this.vreps == other.vreps)

@@ -101,12 +101,12 @@ public class Rect implements AsciiBlock {
    *    false otherwise.
    */
   public boolean eqv(AsciiBlock other) {
-    if (other instanceof Rect){
-      boolean heightCmp = (((Rect)other).height == this.height);
-      boolean strCmp = (((Rect)other).row.compareTo(this.row) == 0);
+    if (other instanceof Rect) {
+      boolean heightCmp = (((Rect) other).height == this.height);
+      boolean strCmp = (((Rect) other).row.compareTo(this.row) == 0);
       return heightCmp && strCmp;
     } // if
-    return false;       
+    return false;
   } // eqv(AsciiBlock)
 
   // +---------------+-----------------------------------------------

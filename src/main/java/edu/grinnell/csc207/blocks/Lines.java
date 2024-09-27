@@ -105,23 +105,22 @@ public class Lines implements AsciiBlock {
 
   /**
    * Checks if 'this' and other have equal String Arrays in their fields.
-   * 
+   *
    * @param other A Lines object to be compared to.
-   * 
+   *
    * @return A boolean
    */
-  public boolean checkEqvStringArr(Lines other){
+  public boolean checkEqvStringArr(Lines other) {
     boolean isTrue = true;
 
-    if (other.lines.length == this.lines.length){
-      for (int i = 0; i < other.lines.length; i++){
+    if (other.lines.length == this.lines.length) {
+      for (int i = 0; i < other.lines.length; i++) {
         isTrue = isTrue && (this.lines[i].compareTo(other.lines[i]) == 0);
       } // for
-    } // if
-    else {
+    } else {
       return false;
     } // if/else
-    return isTrue; 
+    return isTrue;
   } // checkEqvStringArr(Lines)
 
   /**
@@ -134,11 +133,11 @@ public class Lines implements AsciiBlock {
    *    false otherwise.
    */
   public boolean eqv(AsciiBlock other) {
-    if (other instanceof Lines){
-      boolean widthCmp = (((Lines)other).width == this.width);
-      return checkEqvStringArr((Lines)other) && widthCmp;
+    if (other instanceof Lines) {
+      boolean widthCmp = (((Lines) other).width == this.width);
+      return checkEqvStringArr((Lines) other) && widthCmp;
     } // if
 
-    return false;      
+    return false;
   } // eqv(AsciiBlock)
 } // class Lines

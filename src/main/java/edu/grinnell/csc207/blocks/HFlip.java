@@ -31,7 +31,7 @@ public class HFlip implements AsciiBlock {
   public HFlip(AsciiBlock original) {
     if (original == null) {
       throw new IllegalArgumentException("Original block cannot be null");
-    }
+    } // if
     this.block = original;
   } // HFlip(AsciiBlock)
 
@@ -43,9 +43,9 @@ public class HFlip implements AsciiBlock {
 
   /**
    * Flips the characters of a string notFlipped and returns that string.
-   * 
+   *
    * @param notFlipped A string to be flipped
-   * 
+   *
    * @return A string with the characters of notFlipped flipped.
    */
   private String strFlip(String notFlipped) {
@@ -54,7 +54,7 @@ public class HFlip implements AsciiBlock {
 
   /**
    * Get one row from the block with alignment.
-   * 
+   *
    * @param i the number of the row
    *
    * @return row i.
@@ -65,7 +65,6 @@ public class HFlip implements AsciiBlock {
   public String row(int i) throws Exception {
     String originalRow = block.row(i);
     String flippedRow = strFlip(originalRow);
-    
     // Adjusting width for alignment
     int width = width();
     int padding;
@@ -77,7 +76,8 @@ public class HFlip implements AsciiBlock {
           return flippedRow;
         case CENTER:
           padding = (width - flippedRow.length()) / 2;
-          return " ".repeat(padding) + flippedRow + " ".repeat(width - padding - flippedRow.length());
+          return " ".repeat(padding) + flippedRow
+            + " ".repeat(width - padding - flippedRow.length());
         case RIGHT:
           return " ".repeat(width - flippedRow.length()) + flippedRow;
         default:
@@ -90,7 +90,7 @@ public class HFlip implements AsciiBlock {
 
   /**
    * Determine how many rows are in the block.
-   * 
+   *
    * @return the number of rows
    */
   public int height() {
@@ -99,7 +99,7 @@ public class HFlip implements AsciiBlock {
 
   /**
    * Determine how many columns are in the block.
-   * 
+   *
    * @return the number of columns
    */
   public int width() {
@@ -108,7 +108,6 @@ public class HFlip implements AsciiBlock {
 
   /**
    * Determine if another block is structurally equivalent to this block.
-   * 
    * @param other
    *   The block to compare to this block.
    *
@@ -119,6 +118,6 @@ public class HFlip implements AsciiBlock {
     if (other instanceof HFlip) {
       return this.block.eqv(((HFlip) other).block);
     } // if
-    return false;       
+    return false;
   } // eqv(AsciiBlock)
 } // class HFlip

@@ -1,7 +1,6 @@
 package edu.grinnell.csc207.blocks;
 
 import java.util.Arrays;
-
 /**
  * The vertical composition of blocks.
  *
@@ -33,8 +32,10 @@ public class VComp implements AsciiBlock {
    *
    * @param alignment
    *   The way in which the blocks should be aligned.
+   *
    * @param topBlock
    *   The block on the top.
+   *
    * @param bottomBlock
    *   The block on the bottom.
    */
@@ -48,6 +49,7 @@ public class VComp implements AsciiBlock {
    *
    * @param alignment
    *   The alignment of the blocks.
+   *
    * @param blocksToCompose
    *   The blocks we will be composing.
    */
@@ -73,7 +75,7 @@ public class VComp implements AsciiBlock {
   public String row(int i) throws Exception {
     if (i < 0 || i >= height()) {
       throw new Exception("Invalid row index: " + i);
-    }
+    } // if
 
     int currentRow = i;
     for (AsciiBlock block : blocks) {
@@ -86,15 +88,15 @@ public class VComp implements AsciiBlock {
         } else if (align == HAlignment.CENTER) {
           // Calculate padding for center alignment
           int padding = (width() - contentRow.length()) / 2;
-          return " ".repeat(padding) + contentRow + " ".repeat(width() - padding - contentRow.length());
+          return
+            " ".repeat(padding) + contentRow + " ".repeat(width() - padding - contentRow.length());
         } else if (align == HAlignment.RIGHT) {
           // Calculate padding for right alignment
           return " ".repeat(width() - contentRow.length()) + contentRow;
-        }
-      }
+        } // if/elseif/elseif
+      } // if
       currentRow -= blockHeight;
-    }
-    
+    } // for
     // Should not reach here, as row index should be valid
     throw new Exception("Invalid row index: " + i);
   } // row(int)
@@ -108,7 +110,7 @@ public class VComp implements AsciiBlock {
     int totalHeight = 0;
     for (AsciiBlock block : blocks) {
       totalHeight += block.height();
-    }
+    } // for
     return totalHeight;
   } // height()
 
@@ -121,24 +123,31 @@ public class VComp implements AsciiBlock {
     int maxWidth = 0;
     for (AsciiBlock block : blocks) {
       maxWidth = Math.max(maxWidth, block.width());
-    }
+    } // for
     return maxWidth;
   } // width()
 
-  // Checks if all blocks[] is equal to other blocks[] array with eqv as well.
+  /**
+   * Checks if the blocks[] that are in the both the fields of other and 'this' are equal,
+   * i.e. they have the same length and the order of elements is the same.
+   *
+   * @param other VComp to be checked.
+   *
+   * @return boolean indicating if blocks[] in other and this are equal.
+   */
   public boolean checkEqvBlocksArr(VComp other) {
     if (other.blocks.length != this.blocks.length) {
       return false;
-    }
+    } // if
 
     for (int i = 0; i < this.blocks.length; i++) {
       if (!this.blocks[i].eqv(other.blocks[i])) {
         return false;
-      }
-    }
+      } // if
+    } // for
 
     return true;
-  }
+  } // checkEqvBlocksArr(VComp)
 
   /**
    * Determine if another block is structurally equivalent to this block.
@@ -154,6 +163,6 @@ public class VComp implements AsciiBlock {
       boolean alignCmp = (((VComp) other).align == this.align);
       return alignCmp && checkEqvBlocksArr((VComp) other);
     } // if
-    return false; 
+    return false;
   } // eqv(AsciiBlock)
 } // class VComp

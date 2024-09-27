@@ -103,10 +103,10 @@ public class Boxed implements AsciiBlock {
    *    false otherwise.
    */
   public boolean eqv(AsciiBlock other) {
-    if (other instanceof Boxed){
-      return (((Boxed)other).contents.eqv(this.contents));
-    }
-    return false;      
+    if (other instanceof Boxed) {
+      return (((Boxed) other).contents.eqv(this.contents));
+    } // if
+    return false;
   } // eqv(AsciiBlock)
 
   /**

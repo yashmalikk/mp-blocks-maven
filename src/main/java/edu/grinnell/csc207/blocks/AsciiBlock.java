@@ -61,7 +61,7 @@ public interface AsciiBlock {
    * @return true if they are structurally equivalent and false otherwise.
    */
   public static boolean eqv(AsciiBlock block1, AsciiBlock block2) {
-    return block1.eqv(block2);   
+    return block1.eqv(block2);
   } // eqv(AsciiBlock, AsciiBlock)
 
   /**
